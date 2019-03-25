@@ -1,6 +1,16 @@
-deployment:
-  production:
-    branch: master
-    commands:
-      - git remote add production dokku@157.230.99.2:meblex-api
-      - git push production master
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - run:
+          name: Clone main repo
+          working_directory: ~/workdir
+          command: |
+            git clone https://github.com/tania-sila-robocza/Meblex-API.git
+            git remote add production dokku@157.230.99.2:meblex-api
+      - deploy:
+          name: Trigger docs deployment
+          working_directory: ~/workdir
+          command: |
+            git push production master
