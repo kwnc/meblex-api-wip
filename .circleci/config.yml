@@ -3,6 +3,9 @@ jobs:
   build:
     machine: true
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "ad:30:19:e5:c4:9d:c5:62:ea:09:2b:97:b0:bb:d2:d4"
       - run:
           name: Clone main repo
           working_directory: ~/workdir
