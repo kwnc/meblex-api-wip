@@ -1,0 +1,6 @@
+deployment:
+  production:
+    branch: master
+    commands:
+      - git remote add production dokku@157.230.99.2:meblex-api
+      - git push production master
