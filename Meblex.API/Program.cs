@@ -19,6 +19,7 @@ namespace Meblex.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://+:5555")
                 .UseStartup<Startup>();
     }
 }
