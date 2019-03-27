@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Meblex.API.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,12 +11,15 @@ namespace Meblex.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
+            DotNetEnv.Env.Load();
             Configuration = configuration;
+            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        private IHostingEnvironment CurrentEnvironment { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -31,6 +31,14 @@ namespace Meblex.API
                 options.MinimumSameSitePolicy = SameSiteMode.None;
                 
             });
+
+            var connectionString = "server="+CurrentEnvironment.IsEnvironment("DATABASE_HOST") +
+                                   ";userid="+CurrentEnvironment.IsEnvironment("DATABASE_USER")+
+                                    ";password="+CurrentEnvironment.IsEnvironment("DATABASE_PASSWORD")+
+                                    ";database="+CurrentEnvironment.IsEnvironment("DATABASE_NAME");
+            services.AddDbContext<MeblexDbContext>(options => 
+                options.UseMySql(connectionString)
+                );
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
