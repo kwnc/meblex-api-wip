@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Meblex.API.Controller
 {
+
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -10,13 +12,16 @@ namespace Meblex.API.Controller
         [HttpGet]
         public IActionResult Index()
         {
-            
-            return StatusCode(200, new Test(){Name = "dupa"});
+
+            return Ok("Everything works");
 
         }
+
+        [HttpGet("ping")]
+        public IActionResult Pong()
+        {
+            return Ok("Pong");
+        }
     }
-    public class Test
-    {
-        public string Name { get; set; }
-    }
+
 }
