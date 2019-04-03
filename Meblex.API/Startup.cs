@@ -32,10 +32,10 @@ namespace Meblex.API
                 
             });
 
-            var connectionString = "server="+CurrentEnvironment.IsEnvironment("DATABASE_HOST") +
-                                   ";userid="+CurrentEnvironment.IsEnvironment("DATABASE_USER")+
-                                    ";password="+CurrentEnvironment.IsEnvironment("DATABASE_PASSWORD")+
-                                    ";database="+CurrentEnvironment.IsEnvironment("DATABASE_NAME");
+            var connectionString = "server="+ System.Environment.GetEnvironmentVariable("DATABASE_HOST") +
+                                   ";userid="+ System.Environment.GetEnvironmentVariable("DATABASE_USER")+
+                                    ";password="+ System.Environment.GetEnvironmentVariable("DATABASE_PASSWORD")+
+                                    ";database="+ System.Environment.GetEnvironmentVariable("DATABASE_NAME");
             services.AddDbContext<MeblexDbContext>(options => 
                 options.UseMySql(connectionString)
                 );
