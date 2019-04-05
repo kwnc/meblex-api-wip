@@ -3,7 +3,7 @@ jobs:
   build:
   branches:
       only:
-        - develop
+        - master
     machine: true
     steps:
       - add_ssh_keys:
