@@ -1,6 +1,9 @@
 version: 2
 jobs:
   build:
+  branches:
+      only:
+        - develop
     machine: true
     steps:
       - add_ssh_keys:
