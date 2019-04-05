@@ -18,8 +18,8 @@ namespace Meblex.API.Models
 
         [Required]
         public string Password { get; set; }
-
-
+        
+        
         public Client Client { get; set; } 
 
     }
