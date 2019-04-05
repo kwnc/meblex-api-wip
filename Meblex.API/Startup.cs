@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text;
 using Meblex.API.Context;
 using Meblex.API.Helper;
@@ -19,7 +20,8 @@ namespace Meblex.API
     {
         public Startup(IConfiguration configuration)
         {
-            DotNetEnv.Env.Load();
+            if(File.Exists(".env"))
+                DotNetEnv.Env.Load();
             Configuration = configuration;
         }
 
