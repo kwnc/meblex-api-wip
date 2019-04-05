@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Meblex.API.Controller
 {
-
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
