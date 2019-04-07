@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Meblex.API.DTO
 {
@@ -31,7 +27,7 @@ namespace Meblex.API.DTO
         [StringLength(32)]
         public string City { get; set; }
 
-        [RegularExpression(@"/\b\d{5}\b/g", ErrorMessage = "PostCode not valid")]
+//        [RegularExpression(@"\b\d{5}\b/g", ErrorMessage = "PostCode not valid")]
         public int PostCode { get; set; }
     }
 }
