@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Meblex.API.Controller
 {
 
-    [Authorize]
+//    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController: ControllerBase
@@ -19,7 +19,7 @@ namespace Meblex.API.Controller
             _authService = authService;
         }
 
-        [AllowAnonymous]
+//        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Auth([FromBody] UserLoginForm user)
         {
@@ -27,7 +27,7 @@ namespace Meblex.API.Controller
             return  userToken == null ? (IActionResult) StatusCode(401) : Ok(userToken);
         }
 
-        [AllowAnonymous]
+//        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterForm registerForm)
         {
