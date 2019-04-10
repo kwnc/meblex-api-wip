@@ -5,7 +5,8 @@ WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:5000
 EXPOSE 5555
 
-COPY nginx.conf.sigil .
+WORKDIR /
+ADD nginx.conf.sigil /app
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
