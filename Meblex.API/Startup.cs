@@ -31,7 +31,7 @@ namespace Meblex.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-//            services.AddCors();
+            services.AddCors();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -104,13 +104,13 @@ namespace Meblex.API
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-//            app.UseCors(x => x
-//                .AllowAnyOrigin()
-//                .AllowAnyMethod()
-//                .AllowAnyHeader()
-//                .AllowCredentials());
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
-//            app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseSwagger();
             app.UseSwaggerUi3();
