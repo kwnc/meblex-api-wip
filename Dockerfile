@@ -5,13 +5,13 @@ WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:5000
 EXPOSE 5555
 
-
+COPY ["Meblex.API/nginx.conf.sigil", "/app/"]
 
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
 COPY ["Meblex.API/Meblex.API.csproj", "Meblex.API/"]
-COPY ["Meblex.API/nginx.conf.sigil", /app]
+
 RUN dotnet restore "Meblex.API/Meblex.API.csproj"
 COPY . .
 WORKDIR "/src/Meblex.API"
