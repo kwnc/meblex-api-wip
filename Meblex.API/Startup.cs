@@ -23,15 +23,21 @@ namespace Meblex.API
             if(File.Exists(".env"))
                 DotNetEnv.Env.Load();
             Configuration = configuration;
+            _jwtSettings = new JWTSettings();
         }
 
         public IConfiguration Configuration { get; }
 
+        private readonly JWTSettings _jwtSettings;
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddCors();
+
+            services.AddTransient<JWTSettings>();
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IJWTService, JWTService>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -49,12 +55,7 @@ namespace Meblex.API
                 );
 
             
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            services.Configure<AppSettings>(appSettingsSection);
 
-            
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,17 +65,12 @@ namespace Meblex.API
                 {
                     x.RequireHttpsMetadata = false;
                     x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    };
+                    x.TokenValidationParameters =
+                        _jwtSettings.GetTokenValidationParameters(_jwtSettings.AccessTokenSecret);
                 });
 
 
-            services.AddTransient<IAuthService,AuthService>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddOpenApiDocument();

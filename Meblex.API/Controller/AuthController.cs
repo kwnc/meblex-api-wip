@@ -1,42 +1,67 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Meblex.API.DTO;
+using Meblex.API.Helper;
 using Meblex.API.Interfaces;
+using Meblex.API.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Meblex.API.Controller
 {
 
-//    [Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController: ControllerBase
     {
 
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly IJWTService _jwtService;
+        public AuthController(IAuthService authService, IJWTService jwtService)
         {
             _authService = authService;
+            _jwtService = jwtService;
         }
 
-//        [AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Auth([FromBody] UserLoginForm user)
         {
-            var userToken = await _authService.AuthUser(user.Login, user.Password);
-            return  userToken == null ? (IActionResult) StatusCode(401) : Ok(userToken);
+            var accessToken = await _authService.GetAccessToken(user.Login, user.Password);
+            var refreshToken = await _authService.GetRefreshToken(user.Login, user.Password);
+
+            return  accessToken != null && refreshToken != null ? (IActionResult) StatusCode(200, new TokenResponse() { AccessToken = accessToken, RefreshToken = refreshToken }) : StatusCode(500);
         }
 
-//        [AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterForm registerForm)
         {
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
             if (registedUserInfo == null) return StatusCode(500);
-            var userToken = await  _authService.AuthUser(registerForm.Email, registerForm.Password);
+            var accessToken = await  _authService.GetAccessToken(registerForm.Email, registerForm.Password);
+            var refreshToken = await _authService.GetRefreshToken(registerForm.Email, registerForm.Password);
 
-            registedUserInfo.Token = userToken.Token;
-            return userToken == null ? (IActionResult) StatusCode(500) : StatusCode(201, registedUserInfo);
+            return refreshToken != null && accessToken != null ? (IActionResult)StatusCode(201, new TokenResponse() { AccessToken = accessToken, RefreshToken = refreshToken }) : StatusCode(500);
+        }
+
+        [AllowAnonymous]
+        [HttpPut("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenForm token)
+        {
+            try
+            {
+                var userId = _jwtService.GetRefreshTokenUserId(token.Token);
+                var accessToken = await _authService.GetAccessToken(userId);
+                var refreshToken = await _authService.GetRefreshToken(userId);
+                return refreshToken != null && accessToken != null ? (IActionResult)StatusCode(201, new TokenResponse(){AccessToken = accessToken, RefreshToken = refreshToken}) : StatusCode(500);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
     }
 }

@@ -8,7 +8,11 @@ namespace Meblex.API.Interfaces
 {
     public interface IAuthService
     {
-        Task<UserToken> AuthUser(string login, string password);
+
         Task<UserConfirmedRegistation> RegisterNewUser(UserRegisterForm userRegisterForm);
+        Task<string> GetAccessToken(string login, string password);
+        Task<string> GetRefreshToken(string login, string password);
+        Task<string> GetAccessToken(int id);
+        Task<string> GetRefreshToken(int id);
     }
 }

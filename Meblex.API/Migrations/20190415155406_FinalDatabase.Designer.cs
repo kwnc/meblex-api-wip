@@ -3,14 +3,16 @@ using System;
 using Meblex.API.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Meblex.API.Migrations
 {
     [DbContext(typeof(MeblexDbContext))]
-    partial class MeblexDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190415155406_FinalDatabase")]
+    partial class FinalDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
