@@ -13,9 +13,6 @@ namespace Meblex.API.Models
         [StringLength(32)]
         public string Name { get; set; }
 
-        [Required]
-        [StringLength(32)]
-        public string Street { get; set; }
 
         [Required]
         [StringLength(32)]
@@ -31,6 +28,8 @@ namespace Meblex.API.Models
 
         [Required]
         public int PostCode { get; set; }
+
+        public int NIP { get; set; }
 
         [Required]
         public User User { get; set; }

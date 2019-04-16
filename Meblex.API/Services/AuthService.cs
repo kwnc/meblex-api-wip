@@ -21,36 +21,71 @@ namespace Meblex.API.Services
     public class AuthService:IAuthService
     {
         private readonly MeblexDbContext _context;
-        private readonly AppSettings _appSettings;
+        private readonly JWTSettings _jwtSettings;
 
-        public AuthService(MeblexDbContext context, IOptions<AppSettings> appSettings)
+        public AuthService(MeblexDbContext context, JWTSettings jwtSettings)
         {
             _context = context;
-            _appSettings = appSettings.Value;
+            _jwtSettings = jwtSettings;
         }
-        public async Task<UserToken> AuthUser(string login, string password)
+
+        public async Task<string> GetAccessToken(string login, string password)
         {
             var hashedPassword = PasswordHasher(password);
-            var dbUser = await  _context.Users.FirstOrDefaultAsync(x => x.Email == login && x.Password == hashedPassword);
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == login && x.Password == hashedPassword);
             if (dbUser == null) return null;
 
+            return GenerateToken(dbUser, _jwtSettings.AccessTokenSecret, _jwtSettings.AccessTokenExpiredHours);
+        }
+
+        public async Task<string> GetAccessToken(int id)
+        {
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (dbUser == null) return null;
+
+            return GenerateToken(dbUser, _jwtSettings.AccessTokenSecret, _jwtSettings.AccessTokenExpiredHours);
+        }
+
+        public async Task<string> GetRefreshToken(string login, string password)
+        {
+            var hashedPassword = PasswordHasher(password);
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == login && x.Password == hashedPassword);
+            if (dbUser == null) return null;
+
+            return GenerateToken(dbUser, _jwtSettings.RefreshTokenSecret, _jwtSettings.RefreshTokenExpiredHours);
+
+        }
+
+        public async Task<string> GetRefreshToken(int id)
+        {
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (dbUser == null) return null;
+
+            return GenerateToken(dbUser, _jwtSettings.RefreshTokenSecret, _jwtSettings.RefreshTokenExpiredHours);
+
+        }
+
+        private string GenerateToken(User dbUser, string secret, int expiredHours)
+        {
+
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, dbUser.UserId.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddDays(_appSettings.ExpiredAfterDays),
+                Expires = DateTime.UtcNow.AddHours(expiredHours),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var response = new UserToken(){Login = dbUser.Email, Token = tokenHandler.WriteToken(token) };
+            var response = tokenHandler.WriteToken(token);
 
             return response;
-
         }
+
+
 
         public async Task<UserConfirmedRegistation> RegisterNewUser(UserRegisterForm userRegisterForm)
         {
@@ -58,7 +93,7 @@ namespace Meblex.API.Services
 
             _context.Users.Add(user);
 
-            var client = new Client(){ UserId = user.UserId, Address = userRegisterForm.Address, City = userRegisterForm.City, Name = userRegisterForm.Name, PostCode = userRegisterForm.PostCode, State = userRegisterForm.State, Street = userRegisterForm.Street};
+            var client = new Client(){ UserId = user.UserId, Address = userRegisterForm.Address, City = userRegisterForm.City, Name = userRegisterForm.Name, PostCode = userRegisterForm.PostCode, State = userRegisterForm.State};
 
             _context.Clients.Add(client);
 
