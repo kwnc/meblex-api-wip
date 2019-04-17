@@ -24,10 +24,10 @@ namespace Meblex.API.DTO
 
         [StringLength(32)]
         public string State { get; set; }
-        [StringLength(32)]
+        [StringLength(32)] 
         public string City { get; set; }
 
         [RegularExpression(@"\b\d{5}\b/g", ErrorMessage = "PostCode not valid")]
-        public int PostCode { get; set; }
+        public string PostCode { get; set; }
     }
 }
