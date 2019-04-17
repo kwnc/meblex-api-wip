@@ -1,10 +1,23 @@
-version: 2
+version: 2.1
 jobs:
   build:
     branches:
       only:
         - master
     machine: true
+    notify_job_status:
+      description: Send webhook to slackbot about job status
+      steps:
+      - run:
+          name: On success
+          when: on_success
+          command: |
+            curl https://discordapp.com/api/webhooks/568016777511043072/Rs6D-ByCuJNFLsYbWXdYQoqGHqUhjQbLNuoE1Tu3hrEPVhv2FTPRxXPR5lpQulxQUn1E -d '{"payload":{"reponame":"'"$CIRCLE_PROJECT_REPONAME"'","branch":"'"$CIRCLE_BRANCH"'","build_parameters":{"CIRCLE_JOB":"'"$CIRCLE_JOB"'"},"outcome":"fixed","build_url":"'"$CIRCLE_BUILD_URL"'"}}' -H "Content-Type: application/json" -X POST -i
+      - run:
+          name: On fail
+          when: on_fail
+          command: |
+            curl https://discordapp.com/api/webhooks/568016777511043072/Rs6D-ByCuJNFLsYbWXdYQoqGHqUhjQbLNuoE1Tu3hrEPVhv2FTPRxXPR5lpQulxQUn1E -d '{"payload":{"reponame":"'"$CIRCLE_PROJECT_REPONAME"'","branch":"'"$CIRCLE_BRANCH"'","build_parameters":{"CIRCLE_JOB":"'"$CIRCLE_JOB"'"},"outcome":"failed","build_url":"'"$CIRCLE_BUILD_URL"'"}}' -H "Content-Type: application/json" -X POST -i
     notify:
       webhooks:
         - url: https://discordapp.com/api/webhooks/568016777511043072/Rs6D-ByCuJNFLsYbWXdYQoqGHqUhjQbLNuoE1Tu3hrEPVhv2FTPRxXPR5lpQulxQUn1E
@@ -23,3 +36,13 @@ jobs:
           command: |
             git remote add dokku dokku@157.230.99.2:meblex-api
             git push dokku master
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - build:
+        filters:
+          branches:
+            only:
+            - master
+    - notify_job_status        
