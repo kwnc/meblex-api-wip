@@ -93,7 +93,7 @@ namespace Meblex.API.Services
 
             _context.Users.Add(user);
 
-            var client = new Client(){ UserId = user.UserId, Address = userRegisterForm.Address, City = userRegisterForm.City, Name = userRegisterForm.Name, PostCode = userRegisterForm.PostCode, State = userRegisterForm.State};
+            var client = new Client(){ UserId = user.UserId, Address = userRegisterForm.Address, City = userRegisterForm.City, Name = userRegisterForm.Name, PostCode = int.Parse(userRegisterForm.PostCode), State = userRegisterForm.State};
 
             _context.Clients.Add(client);
 
