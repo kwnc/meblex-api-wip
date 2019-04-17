@@ -16,8 +16,9 @@ namespace Meblex.API.DTO
         [StringLength(32)]
         public string Name { get; set; }
 
-        [StringLength(32)]
-        public string Street { get; set; }
+        [StringLength(10, ErrorMessage = "NIP is too long")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "NIP is not valid")]
+        public string NIP { get; set; }
 
         [StringLength(32)]
         public string Address { get; set; }
