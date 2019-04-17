@@ -5,9 +5,6 @@ jobs:
       only:
         - master
     machine: true
-    notify:
-      webhooks:
-        - url: https://discordapp.com/api/webhooks/568016777511043072/Rs6D-ByCuJNFLsYbWXdYQoqGHqUhjQbLNuoE1Tu3hrEPVhv2FTPRxXPR5lpQulxQUn1E
     steps:
       - add_ssh_keys:
           fingerprints:
