@@ -11,7 +11,7 @@
   - Dokku
   - CircelCi
 
-# Basic knowladge
+# Basic knowledge
   - API docs website: meblex-api.tk
   - API is available at: meblex-api.tk/api/*
 
