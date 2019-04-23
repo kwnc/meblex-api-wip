@@ -20,7 +20,7 @@
 # Development
 Base branch for use is development not master!
 Clone repo and open in VisualStudio 2017 or Rider.
-Add .env file to Meblex.API folder from SLACK.
+Add .env file to Meblex.API folder from SLACK(backend channel).
 Project can be run with Docker with Linux container or with IIS Express.
 Each feature should have own branch. 
 Each feature should be merged to development branch then development branch to master.
