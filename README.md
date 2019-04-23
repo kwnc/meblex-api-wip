@@ -18,6 +18,7 @@
   - ReDoc is available at: api-wip.meblex.tk/redoc
 
 # Development
+Base branch for use is development not master!
 Clone repo and open in VisualStudio 2017 or Rider.
 Add .env file to Meblex.API folder from SLACK.
 Project can be run with Docker with Linux container or with IIS Express.
