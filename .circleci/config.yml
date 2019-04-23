@@ -13,10 +13,10 @@ jobs:
           name: Clone main repo
           working_directory: ~/workdir
           command: |
-            git clone git@github.com:tania-sila-robocza/Meblex-API.git            
+            git clone git@github.com:mikart143/meblex-api-wip.git            
       - deploy:
           name: Trigger dokku
           working_directory: ~/workdir/Meblex-API
           command: |
-            git remote add dokku dokku@157.230.99.2:meblex-api
+            git remote add dokku dokku@157.230.99.2:meblex-api-wip
             git push dokku master
