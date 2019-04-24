@@ -1,5 +1,8 @@
 using System.IO;
+using System.Reflection;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Meblex.API.Context;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
@@ -38,6 +41,8 @@ namespace Meblex.API
             services.AddTransient<JWTSettings>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IJWTService, JWTService>();
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -70,8 +75,21 @@ namespace Meblex.API
                 });
 
 
+            ValidatorOptions.PropertyNameResolver = (type, info, arg3) => info.Name.ToLower();
+            ValidatorOptions.CascadeMode = CascadeMode.Continue;
+            ValidatorOptions.LanguageManager.Enabled = true;
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddFluentValidation(fv =>
+                {
+                    fv.LocalizationEnabled = true;
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+
+                    fv.RegisterValidatorsFromAssemblyContaining<Startup>();
+
+                    
+                }); 
 
             services.AddOpenApiDocument();
         }

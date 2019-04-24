@@ -1,34 +1,42 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
+using FluentValidation;
 
 namespace Meblex.API.DTO
 {
     public class UserRegisterForm
     {
-        [Required]
-        [EmailAddress(ErrorMessage = "Email not valid")]
-        public string Email { get; set; }
 
-        [Required]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", ErrorMessage = "Password not valid, minimum eight characters, at least one letter, one number and one special character.")]
+        public string Email { get; set; }
 
         public string Password { get; set; }
 
-        [StringLength(32)]
         public string Name { get; set; }
 
-        [StringLength(10, ErrorMessage = "NIP is too long")]
-        [RegularExpression("^[0-9]*$", ErrorMessage = "NIP is not valid")]
         public string NIP { get; set; }
 
-        [StringLength(32)]
         public string Address { get; set; }
 
-        [StringLength(32)]
         public string State { get; set; }
-        [StringLength(32)] 
+
         public string City { get; set; }
 
-        [RegularExpression(@"\b\d{5}\b/g", ErrorMessage = "PostCode not valid")]
         public string PostCode { get; set; }
+    }
+    public class UserRegisterFormValidator : AbstractValidator<UserRegisterForm>
+    {
+        public UserRegisterFormValidator()
+        {
+            RuleFor(x => x.Email).NotNull().EmailAddress().NotEmpty();
+            RuleFor(x => x.Password).NotEmpty().NotNull()
+                .Matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$");
+            RuleFor(x => x.Name).NotNull().MaximumLength(32);
+            RuleFor(x => x.NIP).NotNull().Matches("^[0-9]*$").Length(10);
+            RuleFor(x => x.Address).NotNull().MaximumLength(32);
+            RuleFor(x => x.State).NotNull().MaximumLength(32);
+            RuleFor(x => x.City).NotNull().MaximumLength(32);
+            RuleFor(x => x.PostCode).NotNull().Matches("\\b\\d{5}\\b/g");
+
+        }
     }
 }
