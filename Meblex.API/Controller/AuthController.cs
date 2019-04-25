@@ -1,19 +1,18 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Meblex.API.DTO;
 using Meblex.API.FormsDto.Response;
-using Meblex.API.Helper;
 using Meblex.API.Interfaces;
-using Meblex.API.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Meblex.API.Controller
 {
 
     [Authorize]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController: ControllerBase
@@ -33,6 +32,8 @@ namespace Meblex.API.Controller
 
         [AllowAnonymous]
         [HttpPost("login")]
+        [SwaggerResponse(200,"",typeof(AuthLoginResponse))]
+        [SwaggerResponse(500)]
         public async Task<IActionResult> Login([FromBody] UserLoginForm user)
         {
             var accessToken = await _authService.GetAccessToken(user.Login, user.Password);
@@ -53,6 +54,8 @@ namespace Meblex.API.Controller
 
         [AllowAnonymous]
         [HttpPost("register")]
+        [SwaggerResponse(201, "", typeof(TokenResponse))]
+        [SwaggerResponse(500)]
         public async Task<IActionResult> Register([FromBody] UserRegisterForm registerForm)
         {
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
@@ -65,6 +68,8 @@ namespace Meblex.API.Controller
 
         [AllowAnonymous]
         [HttpPut("refresh")]
+        [SwaggerResponse(201, "", typeof(TokenResponse))]
+        [SwaggerResponse(500)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenForm token)
         {
             try
