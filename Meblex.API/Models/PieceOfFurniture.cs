@@ -26,26 +26,26 @@ namespace Meblex.API.Models
         [Required]
         public string Description { get; set; }
 
-        public List<CustomSizeForm> CustomSizeForms { get; set; }
+        public virtual List<CustomSizeForm> CustomSizeForms { get; set; }
 
         [Required]
-        public Room Room { get; set; }
+        public virtual Room Room { get; set; }
 
         [Required]
         public int RoomId { get; set; }
 
         [Required]
-        public List<Photo> Photos { get; set; }
+        public virtual List<Photo> Photos { get; set; }
 
         [Required]
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
 
         [Required]
         public int CategoryId { get; set; }
 
         
-        public List<Part> Parts { get; set; }
+        public virtual List<Part> Parts { get; set; }
 
-        public List<OrderLine> OrderLines { get; set; }
+        public virtual List<OrderLine> OrderLines { get; set; }
     }
 }

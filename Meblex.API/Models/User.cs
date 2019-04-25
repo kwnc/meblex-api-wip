@@ -20,7 +20,7 @@ namespace Meblex.API.Models
         public string Password { get; set; }
         
         
-        public Client Client { get; set; } 
+        public virtual Client Client { get; set; } 
 
     }
 }

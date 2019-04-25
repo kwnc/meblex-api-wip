@@ -32,12 +32,12 @@ namespace Meblex.API.Models
         public int NIP { get; set; }
 
         [Required]
-        public User User { get; set; }
+        public virtual User User { get; set; }
         [Required]
         public int UserId { get; set; }
 
-        public List<CustomSizeForm> CustomSizeForms { get; set; }
+        public virtual List<CustomSizeForm> CustomSizeForms { get; set; }
 
-        public List<Order> Orders { get; set; }
+        public virtual List<Order> Orders { get; set; }
     }
 }

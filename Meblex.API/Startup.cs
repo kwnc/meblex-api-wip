@@ -1,6 +1,5 @@
 using System.IO;
-using System.Reflection;
-using System.Text;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Meblex.API.Context;
@@ -15,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Meblex.API
 {
@@ -41,6 +40,7 @@ namespace Meblex.API
             services.AddTransient<JWTSettings>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IJWTService, JWTService>();
+            services.AddTransient<IUserService, UserService>();
 
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -55,9 +55,12 @@ namespace Meblex.API
                                    ";userid="+ System.Environment.GetEnvironmentVariable("DATABASE_USER")+
                                     ";password="+ System.Environment.GetEnvironmentVariable("DATABASE_PASSWORD")+
                                     ";database="+ System.Environment.GetEnvironmentVariable("DATABASE_NAME");
-            services.AddDbContext<MeblexDbContext>(options => 
-                options.UseMySql(connectionString)
-                );
+            services.AddDbContext<MeblexDbContext>(options =>
+            {
+                options.UseLazyLoadingProxies();
+                options.UseMySql(connectionString);
+
+            });
 
             
 
@@ -75,6 +78,9 @@ namespace Meblex.API
                 });
 
 
+            services.AddAutoMapper(cfg => cfg.ValidateInlineMaps = false);
+
+
             ValidatorOptions.PropertyNameResolver = (type, info, arg3) => info.Name.ToLower();
             ValidatorOptions.CascadeMode = CascadeMode.Continue;
             ValidatorOptions.LanguageManager.Enabled = true;
@@ -88,10 +94,16 @@ namespace Meblex.API
 
                     fv.RegisterValidatorsFromAssemblyContaining<Startup>();
 
-                    
-                }); 
 
-            services.AddOpenApiDocument();
+                });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info() { Title = "Meblex API", Version = "v1" });
+                c.AddFluentValidationRules();
+            });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -126,12 +138,19 @@ namespace Meblex.API
 
             app.UseAuthentication();
 
-            app.UseSwagger();
-            app.UseSwaggerUi3();
-            app.UseReDoc(x => x.Path = "/redoc");
+            app.UseMvc().UseSwagger();
+            app.UseReDoc(r =>
+            {
+                r.RoutePrefix = "redoc";
+                r.SpecUrl = "/swagger/v1/swagger.json";
+                r.DocumentTitle = "Meblex API";
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meblex API");
+            });
 
 
-            app.UseMvc();
         }
     }
 }

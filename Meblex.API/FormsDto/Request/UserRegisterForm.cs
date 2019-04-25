@@ -4,6 +4,7 @@ using FluentValidation;
 
 namespace Meblex.API.DTO
 {
+    
     public class UserRegisterForm
     {
 

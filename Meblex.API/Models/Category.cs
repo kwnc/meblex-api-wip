@@ -12,6 +12,6 @@ namespace Meblex.API.Models
         [StringLength(132)]
         public string Name { get; set; }
 
-        public List<PieceOfFurniture> Furniture { get; set; }
+        public virtual List<PieceOfFurniture> Furniture { get; set; }
     }
 }

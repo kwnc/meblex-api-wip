@@ -37,10 +37,10 @@ namespace Meblex.API.Models
         [Required]
         public int PostCode { get; set; }
 
-        public List<OrderLine> OrderLines { get; set; }
+        public virtual List<OrderLine> OrderLines { get; set; }
 
         [Required]
-        public Client Client { get; set; }
+        public virtual Client Client { get; set; }
 
         [Required]
         public int ClientId { get; set; }

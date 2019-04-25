@@ -17,13 +17,13 @@ namespace Meblex.API.Models
         public bool Approved { get; set; }
 
         [Required]
-        public Client Client { get; set; }
+        public virtual Client Client { get; set; }
 
         [Required]
         public int ClientId { get; set; }
 
         [Required]
-        public PieceOfFurniture PieceOfFurniture { get; set; }
+        public virtual PieceOfFurniture PieceOfFurniture { get; set; }
 
         [Required]
         public int PieceOfFurnitureId { get; set; }
