@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 namespace Meblex.API.Helper
@@ -46,7 +47,7 @@ namespace Meblex.API.Helper
 
             return context.Response.WriteAsync(new ExceptionDetails()
             {
-                Title = HttpStatusCode.InternalServerError.ToString(),
+                Title = ReasonPhrases.GetReasonPhrase((int) HttpStatusCode.InternalServerError),
                 Error = exception.Message,
                 Status = (int) HttpStatusCode.InternalServerError,
                 TraceId = Activity.Current?.Id ?? context.TraceIdentifier
@@ -60,7 +61,7 @@ namespace Meblex.API.Helper
 
             return context.Response.WriteAsync(new ExceptionDetails()
             {
-                Title = exception.StatusCode.ToString(),
+                Title = ReasonPhrases.GetReasonPhrase((int) exception.StatusCode),
                 Error = exception.Message,
                 Status = (int) exception.StatusCode,
                 TraceId = Activity.Current?.Id ?? context.TraceIdentifier
