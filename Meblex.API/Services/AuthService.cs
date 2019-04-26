@@ -1,5 +1,6 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,6 +11,7 @@ using Meblex.API.DTO;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -32,7 +34,7 @@ namespace Meblex.API.Services
             var Password = Guard.Argument(password, nameof(password)).NotEmpty().NotNull().NotWhiteSpace();
             var hashedPassword = PasswordHasher(Password);
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == Login && x.Password == hashedPassword);
-            if (dbUser == null) return null;
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
 
             return GenerateToken(dbUser, _jwtSettings.AccessTokenSecret, _jwtSettings.AccessTokenExpiredHours);
         }
@@ -42,7 +44,7 @@ namespace Meblex.API.Services
             var Id = Guard.Argument(id, nameof(id)).NotNegative();
 
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == Id);
-            if (dbUser == null) return null;
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
 
             return GenerateToken(dbUser, _jwtSettings.AccessTokenSecret, _jwtSettings.AccessTokenExpiredHours);
         }
@@ -54,7 +56,7 @@ namespace Meblex.API.Services
 
             var hashedPassword = PasswordHasher(Password);
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == Login && x.Password == hashedPassword);
-            if (dbUser == null) return null;
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
 
             return GenerateToken(dbUser, _jwtSettings.RefreshTokenSecret, _jwtSettings.RefreshTokenExpiredHours);
 
@@ -64,7 +66,7 @@ namespace Meblex.API.Services
         {
             var Id = Guard.Argument(id, nameof(id)).NotNegative();
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == Id);
-            if (dbUser == null) return null;
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
 
             return GenerateToken(dbUser, _jwtSettings.RefreshTokenSecret, _jwtSettings.RefreshTokenExpiredHours);
 
@@ -126,7 +128,7 @@ namespace Meblex.API.Services
                 return new UserConfirmedRegistation() { Login = user.Email };
             }
 
-            return null;
+            throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to register user");
 
         }
 
