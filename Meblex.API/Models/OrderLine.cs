@@ -20,7 +20,7 @@ namespace Meblex.API.Models
         public string Size { get; set; }
 
 
-        public PieceOfFurniture PieceOfFurniture { get; set; }
+        public virtual PieceOfFurniture PieceOfFurniture { get; set; }
 
 
         public int? PieceOfFurnitureId
@@ -40,7 +40,7 @@ namespace Meblex.API.Models
         }
 
 
-        public Part Part { get; set; }
+        public virtual Part Part { get; set; }
 
 
         public int? PartId
@@ -60,7 +60,7 @@ namespace Meblex.API.Models
         }
 
         [Required]
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }
 
         [Required]
         public int OrderId { get; set; }

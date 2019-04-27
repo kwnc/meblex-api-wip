@@ -14,5 +14,6 @@ namespace Meblex.API.Interfaces
         Task<string> GetRefreshToken(string login, string password);
         Task<string> GetAccessToken(int id);
         Task<string> GetRefreshToken(int id);
+        string PasswordHasher(string password);
     }
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using Dawn;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Microsoft.IdentityModel.Tokens;
@@ -20,25 +17,36 @@ namespace Meblex.API.Services
 
         public string GetClaimValue(string claim, TokenValidationParameters tokenValidationParameters, string token)
         {
+            var Token = Guard.Argument(token, nameof(token)).NotEmpty().NotNull().NotWhiteSpace();
+            var Claim = Guard.Argument(claim, nameof(claim)).NotEmpty().NotNull().NotWhiteSpace();
+            var TokenValidationParameters = Guard.Argument(tokenValidationParameters, nameof(tokenValidationParameters))
+                .NotNull().Value;
             var claimsPrincipal = new JwtSecurityTokenHandler()
-                .ValidateToken(token, tokenValidationParameters, out var rawValidatedToken);
+                .ValidateToken(Token, TokenValidationParameters, out var rawValidatedToken);
 
-
-
-
-            return claimsPrincipal.FindFirst(claim).Value;
+            return claimsPrincipal.FindFirst(Claim).Value;
         }
 
         public int GetAccessTokenUserId(string token)
         {
+            var Token = Guard.Argument(token, nameof(token)).NotEmpty().NotNull().NotWhiteSpace();
+
             return int.Parse(GetClaimValue(ClaimTypes.Name,
-                _jwtSettings.GetTokenValidationParameters(_jwtSettings.AccessTokenSecret), token));
+                _jwtSettings.GetTokenValidationParameters(_jwtSettings.AccessTokenSecret), Token));
         }
 
         public int GetRefreshTokenUserId(string token)
         {
+            var Token = Guard.Argument(token, nameof(token)).NotEmpty().NotNull().NotWhiteSpace();
             return int.Parse(GetClaimValue(ClaimTypes.Name,
-                _jwtSettings.GetTokenValidationParameters(_jwtSettings.RefreshTokenSecret), token));
+                _jwtSettings.GetTokenValidationParameters(_jwtSettings.RefreshTokenSecret),Token));
+        }
+
+        public int GetAccessTokenUserId(ClaimsPrincipal principal)
+        {
+            var Principal = Guard.Argument(principal, nameof(principal)).NotNull().Value;
+
+            return int.Parse(Principal.FindFirst(ClaimTypes.Name).Value);
         }
 
        

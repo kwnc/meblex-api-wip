@@ -20,6 +20,6 @@ namespace Meblex.API.Models
         [StringLength(32)]
         public string Slug { get; set; }
 
-        public List<Part> Parts { get; set; }
+        public virtual List<Part> Parts { get; set; }
     }
 }
