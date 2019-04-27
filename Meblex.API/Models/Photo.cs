@@ -13,7 +13,7 @@ namespace Meblex.API.Models
         public string Path { get; set; }
 
         [Required]
-        public PieceOfFurniture PieceOfFurniture { get; set; }
+        public virtual PieceOfFurniture PieceOfFurniture { get; set; }
 
         [Required]
         public int PieceOfFurnitureId { get; set; }
