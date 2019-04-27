@@ -32,7 +32,7 @@ namespace Meblex.API.DTO
             RuleFor(x => x.Password).NotEmpty().NotNull()
                 .Matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$");
             RuleFor(x => x.Name).NotNull().MaximumLength(32);
-            RuleFor(x => x.NIP).NotNull().Matches("^[0-9]*$").Length(10);
+            RuleFor(x => x.NIP).NotNull().Matches("^[0-9]*$").Length(10).When(x => !string.IsNullOrEmpty(x.Name) || !string.IsNullOrWhiteSpace(x.Name)); 
             RuleFor(x => x.Address).NotNull().MaximumLength(32);
             RuleFor(x => x.State).NotNull().MaximumLength(32);
             RuleFor(x => x.City).NotNull().MaximumLength(32);

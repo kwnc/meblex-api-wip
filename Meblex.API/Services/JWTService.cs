@@ -42,6 +42,13 @@ namespace Meblex.API.Services
                 _jwtSettings.GetTokenValidationParameters(_jwtSettings.RefreshTokenSecret),Token));
         }
 
+        public int GetAccessTokenUserId(ClaimsPrincipal principal)
+        {
+            var Principal = Guard.Argument(principal, nameof(principal)).NotNull().Value;
+
+            return int.Parse(Principal.FindFirst(ClaimTypes.Name).Value);
+        }
+
        
     }
 }

@@ -132,7 +132,7 @@ namespace Meblex.API.Services
 
         }
 
-        private string PasswordHasher(string password)
+        public string PasswordHasher(string password)
         {
             var Password = Guard.Argument(password, nameof(password)).NotEmpty().NotNull().NotWhiteSpace();
             var md5Hasher = MD5.Create();

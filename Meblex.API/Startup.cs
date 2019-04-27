@@ -41,6 +41,7 @@ namespace Meblex.API
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IJWTService, JWTService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IClientService, ClientService>();
 
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -78,7 +79,12 @@ namespace Meblex.API
                 });
 
 
-            services.AddAutoMapper(cfg => cfg.ValidateInlineMaps = false);
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.ForAllMaps((typeMap, map) =>
+                    map.ForAllMembers(option => option.Condition((source, destination, sourceMember) => sourceMember != null)));
+                cfg.ValidateInlineMaps = false;
+            });
 
 
             ValidatorOptions.PropertyNameResolver = (type, info, arg3) => info.Name.ToLower();
@@ -101,6 +107,7 @@ namespace Meblex.API
             {
                 c.SwaggerDoc("v1", new Info() { Title = "Meblex API", Version = "v1" });
                 c.AddFluentValidationRules();
+                c.EnableAnnotations();
             });
 
 
