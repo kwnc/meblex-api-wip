@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,15 +30,15 @@ namespace Meblex.API.Models
         [Required]
         public int PostCode { get; set; }
 
-        public int NIP { get; set; }
+        public int? NIP { get; set; }
 
         [Required]
-        public User User { get; set; }
+        public virtual User User { get; set; }
         [Required]
         public int UserId { get; set; }
 
-        public List<CustomSizeForm> CustomSizeForms { get; set; }
+        public virtual List<CustomSizeForm> CustomSizeForms { get; set; }
 
-        public List<Order> Orders { get; set; }
+        public virtual List<Order> Orders { get; set; }
     }
 }

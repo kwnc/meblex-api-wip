@@ -1,5 +1,7 @@
 using System.IO;
-using System.Text;
+using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Meblex.API.Context;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
@@ -12,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Meblex.API
 {
@@ -38,6 +40,10 @@ namespace Meblex.API
             services.AddTransient<JWTSettings>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IJWTService, JWTService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IClientService, ClientService>();
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -50,9 +56,12 @@ namespace Meblex.API
                                    ";userid="+ System.Environment.GetEnvironmentVariable("DATABASE_USER")+
                                     ";password="+ System.Environment.GetEnvironmentVariable("DATABASE_PASSWORD")+
                                     ";database="+ System.Environment.GetEnvironmentVariable("DATABASE_NAME");
-            services.AddDbContext<MeblexDbContext>(options => 
-                options.UseMySql(connectionString)
-                );
+            services.AddDbContext<MeblexDbContext>(options =>
+            {
+                options.UseLazyLoadingProxies();
+                options.UseMySql(connectionString);
+
+            });
 
             
 
@@ -70,10 +79,38 @@ namespace Meblex.API
                 });
 
 
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.ForAllMaps((typeMap, map) =>
+                    map.ForAllMembers(option => option.Condition((source, destination, sourceMember) => sourceMember != null)));
+                cfg.ValidateInlineMaps = false;
+            });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddOpenApiDocument();
+            ValidatorOptions.PropertyNameResolver = (type, info, arg3) => info.Name.ToLower();
+            ValidatorOptions.CascadeMode = CascadeMode.Continue;
+            ValidatorOptions.LanguageManager.Enabled = true;
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddFluentValidation(fv =>
+                {
+                    fv.LocalizationEnabled = true;
+
+                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+
+                    fv.RegisterValidatorsFromAssemblyContaining<Startup>();
+
+
+                });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info() { Title = "Meblex API", Version = "v1" });
+                c.AddFluentValidationRules();
+                c.EnableAnnotations();
+            });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,12 +119,14 @@ namespace Meblex.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                
             }
             else
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseMiddleware<ExceptionMiddleware>();
             }
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -108,12 +147,19 @@ namespace Meblex.API
 
             app.UseAuthentication();
 
-            app.UseSwagger();
-            app.UseSwaggerUi3();
-            app.UseReDoc(x => x.Path = "/redoc");
+            app.UseMvc().UseSwagger();
+            app.UseReDoc(r =>
+            {
+                r.RoutePrefix = "redoc";
+                r.SpecUrl = "/swagger/v1/swagger.json";
+                r.DocumentTitle = "Meblex API";
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meblex API");
+            });
 
 
-            app.UseMvc();
         }
     }
 }

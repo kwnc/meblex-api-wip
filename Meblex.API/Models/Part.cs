@@ -19,22 +19,22 @@ namespace Meblex.API.Models
         public float Price { get; set; }
 
         [Required]
-        public PieceOfFurniture PieceOfFurniture { get; set; }
+        public virtual PieceOfFurniture PieceOfFurniture { get; set; }
 
         [Required]
         public int PieceOfFurnitureId { get; set; }
         [Required]
-        public Pattern Pattern { get; set; }
+        public virtual Pattern Pattern { get; set; }
         [Required]
         public int PatternId { get; set; }
         [Required]
-        public Color Color { get; set; }
+        public virtual Color Color { get; set; }
         [Required]
         public int ColorId { get; set; }
         [Required]
-        public Material Material { get; set; }
+        public virtual Material Material { get; set; }
         [Required]
         public int MaterialId { get; set; }
-        public OrderLine OrderLine { get; set; }
+        public virtual OrderLine OrderLine { get; set; }
     }
 }
