@@ -82,8 +82,13 @@ namespace Meblex.API
             services.AddAutoMapper(cfg =>
             {
                 cfg.ForAllMaps((typeMap, map) =>
-                    map.ForAllMembers(option => option.Condition((source, destination, sourceMember) => sourceMember != null)));
+                {
+                    
+                    map.ForAllMembers(option =>
+                            option.Condition((source, destination, sourceMember) => sourceMember != null));
+                });
                 cfg.ValidateInlineMaps = false;
+                cfg.CreateMissingTypeMaps = true;
             });
 
 

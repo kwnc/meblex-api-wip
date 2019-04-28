@@ -97,9 +97,9 @@ namespace Meblex.API.Services
 
 
 
-        public async Task<UserConfirmedRegistation> RegisterNewUser(UserRegisterForm userRegisterForm)
+        public async Task<UserConfirmedRegistation> RegisterNewUser(AuthRegisterForm authRegisterForm)
         {
-            var UserRegisterForm = Guard.Argument(userRegisterForm, nameof(userRegisterForm)).NotNull().Value;
+            var UserRegisterForm = Guard.Argument(authRegisterForm, nameof(authRegisterForm)).NotNull().Value;
             var user = new User()
             {
                 Email = UserRegisterForm.Email,
@@ -117,7 +117,7 @@ namespace Meblex.API.Services
                 Name = UserRegisterForm.Name,
                 PostCode = int.Parse(UserRegisterForm.PostCode),
                 State = UserRegisterForm.State,
-                NIP = int.Parse(UserRegisterForm.NIP)
+                NIP = UserRegisterForm.NIP != null ? int.Parse(UserRegisterForm.NIP) : (int?) null
             };
 
             _context.Clients.Add(client);

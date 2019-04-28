@@ -30,7 +30,7 @@ namespace Meblex.API.FormsDto.Request
             RuleFor(x => x.Address).NotNull().NotEmpty().MaximumLength(32).When(x => x.Address != null);
             RuleFor(x => x.State).NotNull().NotEmpty().MaximumLength(32).When(x => x.State != null);
             RuleFor(x => x.City).NotNull().NotEmpty().MaximumLength(32).When(x => x.City != null);
-            RuleFor(x => x.PostCode).NotNull().NotEmpty().Matches("\\b\\d{5}\\b/g").When(x => x.PostCode != null);
+            RuleFor(x => x.PostCode).NotNull().NotEmpty().Matches(@"\b\d{5}\b/g").When(x => x.PostCode != null);
         }
     }
 }

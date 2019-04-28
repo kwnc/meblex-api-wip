@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dawn;
+using Meblex.API.DTO;
 using Meblex.API.FormsDto.Request;
 using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
@@ -43,17 +44,17 @@ namespace Meblex.API.Controller
         {
             var id = _jwtService.GetAccessTokenUserId(User);
             var clientId = await _clientService.GetClientIdFromUserId(id);
-            var client = _mapper.Map<Client>(userUpdateForm);
-            client.ClientId = clientId;
+            var client = _mapper.Map<ClientUpdateDto>(userUpdateForm);
+            
 
-            var isUpdated = await _clientService.UpdateClientData(client);
+            var isUpdated = await _clientService.UpdateClientData(client, clientId);
 
             if (!isUpdated)
             {
                 return StatusCode(500);
             }
 
-            var clientData = _clientService.GetClientData(clientId);
+            var clientData = await _clientService.GetClientData(clientId);
 
             return StatusCode(200, clientData);
         }

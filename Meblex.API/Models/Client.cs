@@ -7,6 +7,11 @@ namespace Meblex.API.Models
 {
     public class Client
     {
+        public Client()
+        {
+            Orders = new List<Order>();
+            CustomSizeForms = new List<CustomSizeForm>();
+        }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int  ClientId { get; set; }
 
