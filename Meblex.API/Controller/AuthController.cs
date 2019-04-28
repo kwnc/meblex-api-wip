@@ -56,7 +56,7 @@ namespace Meblex.API.Controller
         [HttpPost("register")]
         [SwaggerResponse(201, "", typeof(TokenResponse))]
         [SwaggerResponse(500)]
-        public async Task<IActionResult> Register([FromBody] UserRegisterForm registerForm)
+        public async Task<IActionResult> Register([FromBody] AuthRegisterForm registerForm)
         {
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
             if (registedUserInfo == null) return StatusCode(500);

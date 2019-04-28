@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Dawn;
 using Meblex.API.Context;
+using Meblex.API.DTO;
 using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
@@ -22,14 +23,20 @@ namespace Meblex.API.Services
             _mapper = mapper;
         }
 
-        public async Task<bool> UpdateClientData(Client client)
+        public async Task<bool> UpdateClientData(ClientUpdateDto client, int clientId)
         {
             var Client = Guard.Argument(client, nameof(client)).NotNull().Value;
+            var ClientId = Guard.Argument(clientId, nameof(clientId)).NotNegative();
 
 
-            var clientDb = await _context.Clients.SingleOrDefaultAsync(x => x.ClientId == Client.ClientId);
+            var clientDb = await _context.Clients.SingleOrDefaultAsync(x => x.ClientId == ClientId);
 
-            clientDb = _mapper.Map<Client, Client>(Client, clientDb);
+            clientDb.Name = Client.Name ?? clientDb.Name;
+            clientDb.Address = Client.Address ?? clientDb.Address;
+            clientDb.City = Client.City ?? clientDb.City;
+            clientDb.NIP = Client.NIP != null ? int.Parse(Client.NIP) : clientDb.NIP;
+            clientDb.PostCode = Client.PostCode != null ? int.Parse(Client.PostCode) : clientDb.PostCode;
+            clientDb.State = Client.State ?? clientDb.State;
 
             _context.Clients.Update(clientDb);
 
