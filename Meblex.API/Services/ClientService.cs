@@ -10,6 +10,7 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.EntityFrameworkCore;
+using Mapper = AgileObjects.AgileMapper.Mapper;
 
 namespace Meblex.API.Services
 {
@@ -31,12 +32,19 @@ namespace Meblex.API.Services
 
             var clientDb = await _context.Clients.SingleOrDefaultAsync(x => x.ClientId == ClientId);
 
-            clientDb.Name = Client.Name ?? clientDb.Name;
-            clientDb.Address = Client.Address ?? clientDb.Address;
-            clientDb.City = Client.City ?? clientDb.City;
-            clientDb.NIP = Client.NIP != null ? int.Parse(Client.NIP) : clientDb.NIP;
-            clientDb.PostCode = Client.PostCode != null ? int.Parse(Client.PostCode) : clientDb.PostCode;
-            clientDb.State = Client.State ?? clientDb.State;
+
+            Mapper.Map(Client).Over(clientDb, cfg => 
+                cfg.IgnoreTargetMembersWhere(t => 
+                    t.IsPropertyMatching(info => 
+                        info.GetType().GetProperties().All(p =>
+                            p.GetValue(info) != null))));
+
+//            clientDb.Name = Client.Name ?? clientDb.Name;
+//            clientDb.Address = Client.Address ?? clientDb.Address;
+//            clientDb.City = Client.City ?? clientDb.City;
+//            clientDb.NIP = Client.NIP != null ? int.Parse(Client.NIP) : clientDb.NIP;
+//            clientDb.PostCode = Client.PostCode != null ? int.Parse(Client.PostCode) : clientDb.PostCode;
+//            clientDb.State = Client.State ?? clientDb.State;
 
             _context.Clients.Update(clientDb);
 
