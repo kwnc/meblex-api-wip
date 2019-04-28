@@ -32,6 +32,10 @@ namespace Meblex.API.Controller
 
         [AllowAnonymous]
         [HttpPost("login")]
+        [SwaggerOperation(
+            Summary = "Login endpoint",
+            Description = "User can get tokens and user data",
+            OperationId = "AuthLogin")]
         [SwaggerResponse(200,"",typeof(AuthLoginResponse))]
         [SwaggerResponse(500)]
         public async Task<IActionResult> Login([FromBody] UserLoginForm user)
@@ -54,6 +58,10 @@ namespace Meblex.API.Controller
 
         [AllowAnonymous]
         [HttpPost("register")]
+        [SwaggerOperation(
+            Summary = "Register endpoint",
+            Description = "Can register a new user",
+            OperationId = "AuthRegister")]
         [SwaggerResponse(201, "", typeof(TokenResponse))]
         [SwaggerResponse(500)]
         public async Task<IActionResult> Register([FromBody] AuthRegisterForm registerForm)
@@ -68,6 +76,10 @@ namespace Meblex.API.Controller
 
         [AllowAnonymous]
         [HttpPut("refresh")]
+        [SwaggerOperation(
+            Summary = "Token refresh",
+            Description = "Can refresh user tokens with resfresh token",
+            OperationId = "AuthRefresh")]
         [SwaggerResponse(201, "", typeof(TokenResponse))]
         [SwaggerResponse(500)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenForm token)

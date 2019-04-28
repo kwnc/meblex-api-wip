@@ -25,12 +25,12 @@ namespace Meblex.API.FormsDto.Request
     {
         public UserUpdateFormValidation()
         {
-            RuleFor(x => x.Name).NotNull().NotEmpty().MaximumLength(32).When(x => x.Name != null);
-            RuleFor(x => x.NIP).NotNull().NotEmpty().Matches("^[0-9]*$").Length(10).When(x => x.NIP != null);
-            RuleFor(x => x.Address).NotNull().NotEmpty().MaximumLength(32).When(x => x.Address != null);
-            RuleFor(x => x.State).NotNull().NotEmpty().MaximumLength(32).When(x => x.State != null);
-            RuleFor(x => x.City).NotNull().NotEmpty().MaximumLength(32).When(x => x.City != null);
-            RuleFor(x => x.PostCode).NotNull().NotEmpty().Matches(@"\b\d{5}\b/g").When(x => x.PostCode != null);
+            RuleFor(x => x.Name).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.Name));
+            RuleFor(x => x.NIP).Matches("^[0-9]*$").Length(10).When(x => !string.IsNullOrEmpty(x.NIP));
+            RuleFor(x => x.Address).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.Address));
+            RuleFor(x => x.State).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.State));
+            RuleFor(x => x.City).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.City));
+            RuleFor(x => x.PostCode).Matches(@"\b\d{5}\b").When(x => !string.IsNullOrEmpty(x.PostCode));
         }
     }
 }

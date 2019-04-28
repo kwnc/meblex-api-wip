@@ -13,6 +13,7 @@ using Meblex.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Mapper = AgileObjects.AgileMapper.Mapper;
 
 namespace Meblex.API.Controller
 {
@@ -44,7 +45,8 @@ namespace Meblex.API.Controller
         {
             var id = _jwtService.GetAccessTokenUserId(User);
             var clientId = await _clientService.GetClientIdFromUserId(id);
-            var client = _mapper.Map<ClientUpdateDto>(userUpdateForm);
+//            var client = _mapper.Map<ClientUpdateDto>(userUpdateForm);
+            var client = Mapper.Map(userUpdateForm).ToANew<ClientUpdateDto>();
             
 
             var isUpdated = await _clientService.UpdateClientData(client, clientId);
@@ -120,6 +122,17 @@ namespace Meblex.API.Controller
             var isMatching = await _userService.CheckIfEmailIsMatching(id, userEmailCheckForm.Email);
 
             return isMatching ? StatusCode(204) : StatusCode(409);
+        }
+
+        [HttpGet]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200, null,typeof(ClientUpdateResponse))]
+        public async Task<IActionResult> GetUserData()
+        {
+            var id = _jwtService.GetAccessTokenUserId(User);
+            var userData = await _clientService.GetClientData(id);
+
+            return StatusCode(200, userData);
         }
 
     }
