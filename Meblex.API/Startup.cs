@@ -1,4 +1,8 @@
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using AgileObjects.AgileMapper.Extensions;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -10,10 +14,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebSockets.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Meblex.API
@@ -92,6 +100,7 @@ namespace Meblex.API
             });
 
 
+
             ValidatorOptions.PropertyNameResolver = (type, info, arg3) => info.Name.ToLower();
             ValidatorOptions.CascadeMode = CascadeMode.Continue;
             ValidatorOptions.LanguageManager.Enabled = true;
@@ -99,20 +108,34 @@ namespace Meblex.API
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddFluentValidation(fv =>
                 {
-                    fv.LocalizationEnabled = true;
 
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
 
                     fv.RegisterValidatorsFromAssemblyContaining<Startup>();
 
 
-                });
+                }).AddJsonOptions(opt => opt.SerializerSettings.StringEscapeHandling = StringEscapeHandling.EscapeHtml);
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info() { Title = "Meblex API", Version = "v1" });
                 c.AddFluentValidationRules();
                 c.EnableAnnotations();
+            });
+
+            services.Configure<RequestLocalizationOptions>(opt =>
+            {
+                var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("pl") };
+                opt.DefaultRequestCulture = new RequestCulture("pl", "pl");
+                opt.SupportedCultures = supportedCultures;
+                opt.SupportedUICultures = supportedCultures;
+                opt.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider( context =>
+                {
+
+                    var lang = context.Request.GetTypedHeaders().AcceptLanguage?.FirstOrDefault()?.Value.Value ?? "en-US";
+                    return Task.FromResult(new ProviderCultureResult(lang, lang));
+
+                }));
             });
 
 
@@ -151,7 +174,7 @@ namespace Meblex.API
                 .AllowCredentials());
 
             app.UseAuthentication();
-
+            app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
             app.UseMvc().UseSwagger();
             app.UseReDoc(r =>
             {
@@ -163,6 +186,8 @@ namespace Meblex.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meblex API");
             });
+
+            
 
 
         }
