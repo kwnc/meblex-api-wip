@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using Meblex.API.DTO;
 using Meblex.API.FormsDto.Response;
@@ -33,22 +35,22 @@ namespace Meblex.API.Controller
         [AllowAnonymous]
         [HttpPost("login")]
         [SwaggerOperation(
-            Summary = "Login endpoint",
+            Summary = "Email endpoint",
             Description = "User can get tokens and user data",
             OperationId = "AuthLogin")]
         [SwaggerResponse(200,"",typeof(AuthLoginResponse))]
         [SwaggerResponse(500)]
         public async Task<IActionResult> Login([FromBody] UserLoginForm user)
         {
-            var accessToken = await _authService.GetAccessToken(user.Login, user.Password);
-            var refreshToken = await _authService.GetRefreshToken(user.Login, user.Password);
-            var userData = await _userService.GetUserData(user.Login);
+            var accessToken = await _authService.GetAccessToken(user.Email, user.Password);
+            var refreshToken = await _authService.GetRefreshToken(user.Email, user.Password);
+            var userData = await _userService.GetUserData(user.Email);
 
             
             var response = _mapper.Map<AuthLoginResponse>(userData);
             response.AccessToken = accessToken;
             response.RefreshToken = refreshToken;
-            response.Email = user.Login;
+            response.Email = user.Email;
             
             
 
@@ -66,6 +68,8 @@ namespace Meblex.API.Controller
         [SwaggerResponse(500)]
         public async Task<IActionResult> Register([FromBody] AuthRegisterForm registerForm)
         {
+            CultureInfo uiCultureInfo = Thread.CurrentThread.CurrentUICulture;
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
             if (registedUserInfo == null) return StatusCode(500);
             var accessToken = await  _authService.GetAccessToken(registerForm.Email, registerForm.Password);
@@ -95,6 +99,19 @@ namespace Meblex.API.Controller
             {
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet("check")]
+        [SwaggerOperation(
+            Summary = "Token access check",
+            Description = "Endpoint response 200 if access token is valid",
+            OperationId = "AuthCheck")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(401)]
+        [SwaggerResponse(200)]
+        public IActionResult Check()
+        {
+            return Ok();
         }
     }
 }
