@@ -30,8 +30,6 @@ namespace Meblex.API.DTO
     {
         public UserRegisterFormValidator()
         {
-            CultureInfo uiCultureInfo = Thread.CurrentThread.CurrentUICulture;
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             RuleFor(x => x.Email).NotNull().EmailAddress().NotEmpty();
             RuleFor(x => x.Password).NotEmpty().NotNull()
                 .Matches(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$");

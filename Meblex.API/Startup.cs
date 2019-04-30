@@ -114,7 +114,8 @@ namespace Meblex.API
                     fv.RegisterValidatorsFromAssemblyContaining<Startup>();
 
 
-                }).AddJsonOptions(opt => opt.SerializerSettings.StringEscapeHandling = StringEscapeHandling.EscapeHtml);
+                })
+                .AddJsonOptions(opt => opt.SerializerSettings.StringEscapeHandling = StringEscapeHandling.EscapeHtml);
 
             services.AddSwaggerGen(c =>
             {
