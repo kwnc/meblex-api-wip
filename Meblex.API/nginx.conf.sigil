@@ -16,8 +16,6 @@ server {
 {{ else }}
   location    / {
 
-
-
     gzip on;
     gzip_min_length  1100;
     gzip_buffers  4 32k;
@@ -34,8 +32,6 @@ server {
     proxy_set_header X-Forwarded-For $remote_addr;
     proxy_set_header X-Forwarded-Port $server_port;
     proxy_set_header X-Request-Start $msec;
-
-	
   }
   include {{ $.DOKKU_ROOT }}/{{ $.APP }}/nginx.conf.d/*.conf;
 
@@ -77,35 +73,6 @@ server {
 
   location    / {
 
-	###CORS-START###
-	if ($request_method = 'OPTIONS') {
-       add_header 'Access-Control-Allow-Origin' '*';
-       add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-       #
-       # Custom headers and headers various browsers *should* be OK with but aren't
-       #
-       add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-       #
-       # Tell client that this pre-flight info is valid for 20 days
-       #
-       add_header 'Access-Control-Max-Age' 1728000;
-       add_header 'Content-Type' 'text/plain; charset=utf-8';
-       add_header 'Content-Length' 0;
-       return 204;
-    }
-    if ($request_method = 'POST') {
-       add_header 'Access-Control-Allow-Origin' '*';
-       add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-       add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
-       add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-    }
-    if ($request_method = 'GET') {
-       add_header 'Access-Control-Allow-Origin' '*';
-       add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-       add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,,Authorization';
-       add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-    }
-	###CORS-END###
     gzip on;
     gzip_min_length  1100;
     gzip_buffers  4 32k;
@@ -116,18 +83,13 @@ server {
     proxy_pass  http://{{ $.APP }}-{{ $upstream_port }};
     {{ if eq $.HTTP2_PUSH_SUPPORTED "true" }}http2_push_preload on; {{ end }}
     proxy_http_version 1.1;
-    #proxy_set_header Upgrade $http_upgrade;
-    #proxy_set_header Connection "upgrade";
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
     proxy_set_header Host $http_host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-For $remote_addr;
     proxy_set_header X-Forwarded-Port $server_port;
     proxy_set_header X-Request-Start $msec;
-	proxy_set_header 'Access-Control-Max-Age' 1728000;
-    proxy_set_header 'Access-Control-Allow-Origin' '*';
-    proxy_set_header 'Access-Control-Allow-Credentials' 'true';
-    proxy_set_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-    proxy_set_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
   }
   include {{ $.DOKKU_ROOT }}/{{ $.APP }}/nginx.conf.d/*.conf;
 
