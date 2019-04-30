@@ -35,7 +35,7 @@ namespace Meblex.API.Controller
         [AllowAnonymous]
         [HttpPost("login")]
         [SwaggerOperation(
-            Summary = "Email endpoint",
+            Summary = "Login endpoint",
             Description = "User can get tokens and user data",
             OperationId = "AuthLogin")]
         [SwaggerResponse(200,"",typeof(AuthLoginResponse))]
@@ -68,8 +68,6 @@ namespace Meblex.API.Controller
         [SwaggerResponse(500)]
         public async Task<IActionResult> Register([FromBody] AuthRegisterForm registerForm)
         {
-            CultureInfo uiCultureInfo = Thread.CurrentThread.CurrentUICulture;
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
             if (registedUserInfo == null) return StatusCode(500);
             var accessToken = await  _authService.GetAccessToken(registerForm.Email, registerForm.Password);
