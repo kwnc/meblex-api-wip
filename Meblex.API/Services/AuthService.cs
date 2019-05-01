@@ -138,10 +138,10 @@ namespace Meblex.API.Services
             var Password = Guard.Argument(password, nameof(password)).NotEmpty().NotNull().NotWhiteSpace();
 
 
-            var user = await _context.Users.SingleOrDefaultAsync(x =>
+            var user = await _context.Users.AnyAsync(x =>
                 x.Email == Email && x.Password == PasswordHasher(Password));
 
-            return user != null;
+            return user;
 
         }
 

@@ -98,9 +98,9 @@ namespace Meblex.API.Services
         {
             var Email = Guard.Argument(email, nameof(email)).NotEmpty().NotNull().NotWhiteSpace();
 
-            var exist = await _context.Users.SingleOrDefaultAsync(x => x.Email == Email);
+            var exist = await _context.Users.AnyAsync(x => x.Email == Email);
 
-            return exist != null;
+            return exist;
         }
 
         
