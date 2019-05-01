@@ -76,7 +76,7 @@ namespace Meblex.API.Controller
         public async Task<IActionResult> Register([FromBody] AuthRegisterForm registerForm)
         {
             var checkEmail = await _userService.CheckIfUserWithEmailExist(registerForm.Email);
-            if (!checkEmail) return StatusCode(409);
+            if (checkEmail) return StatusCode(409);
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
             if (registedUserInfo == null) return StatusCode(500);
             var accessToken = await  _authService.GetAccessToken(registerForm.Email, registerForm.Password);
