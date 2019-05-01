@@ -40,8 +40,12 @@ namespace Meblex.API.Controller
             OperationId = "AuthLogin")]
         [SwaggerResponse(200,"",typeof(AuthLoginResponse))]
         [SwaggerResponse(500)]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(401)]
         public async Task<IActionResult> Login([FromBody] UserLoginForm user)
         {
+            var loginCheck = await _authService.CheckUser(user.Email, user.Password);
+            if (!loginCheck) return StatusCode(401);
             var accessToken = await _authService.GetAccessToken(user.Email, user.Password);
             var refreshToken = await _authService.GetRefreshToken(user.Email, user.Password);
             var userData = await _userService.GetUserData(user.Email);
@@ -66,8 +70,11 @@ namespace Meblex.API.Controller
             OperationId = "AuthRegister")]
         [SwaggerResponse(201, "", typeof(TokenResponse))]
         [SwaggerResponse(500)]
+        [SwaggerResponse(409)]
         public async Task<IActionResult> Register([FromBody] AuthRegisterForm registerForm)
         {
+            var checkEmail = await _userService.CheckIfUserWithEmailExist(registerForm.Email);
+            if (!checkEmail) return StatusCode(409);
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
             if (registedUserInfo == null) return StatusCode(500);
             var accessToken = await  _authService.GetAccessToken(registerForm.Email, registerForm.Password);
@@ -84,6 +91,7 @@ namespace Meblex.API.Controller
             OperationId = "AuthRefresh")]
         [SwaggerResponse(201, "", typeof(TokenResponse))]
         [SwaggerResponse(500)]
+        [SwaggerResponse(404)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenForm token)
         {
             try
@@ -107,6 +115,7 @@ namespace Meblex.API.Controller
         [SwaggerResponse(500)]
         [SwaggerResponse(401)]
         [SwaggerResponse(200)]
+        [SwaggerResponse(404)]
         public IActionResult Check()
         {
             return Ok();

@@ -14,7 +14,13 @@ namespace Meblex.API.Controller
     public class TestController :ControllerBase
     {
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Test endpoint",
+            Description = "User can check if everything is OK",
+            OperationId = "TestCheck")]
         [SwaggerResponse(200,"Health Check", typeof(string))]
+        [SwaggerResponse(401)]
+        [SwaggerResponse(500)]
         public IActionResult Index()
         {
 
@@ -23,7 +29,13 @@ namespace Meblex.API.Controller
         }
 
         [HttpGet("ping")]
+        [SwaggerOperation(
+            Summary = "Ping Pong Endpoint",
+            Description = "User can ping server",
+            OperationId = "TestPing")]
         [SwaggerResponse(200, "Ping", typeof(string))]
+        [SwaggerResponse(401)]
+        [SwaggerResponse(500)]
         public IActionResult Pong()
         {
             return Ok("Pong");

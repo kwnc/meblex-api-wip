@@ -132,6 +132,19 @@ namespace Meblex.API.Services
 
         }
 
+        public async Task<bool> CheckUser(string email, string password)
+        {
+            var Email = Guard.Argument(email, nameof(email)).NotEmpty().NotWhiteSpace().NotNull();
+            var Password = Guard.Argument(password, nameof(password)).NotEmpty().NotNull().NotWhiteSpace();
+
+
+            var user = await _context.Users.SingleOrDefaultAsync(x =>
+                x.Email == Email && x.Password == PasswordHasher(Password));
+
+            return user != null;
+
+        }
+
         public string PasswordHasher(string password)
         {
             var Password = Guard.Argument(password, nameof(password)).NotEmpty().NotNull().NotWhiteSpace();

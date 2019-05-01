@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
-using Dawn;
 using Meblex.API.DTO;
 using Meblex.API.FormsDto.Request;
 using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
-using Meblex.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -41,6 +35,7 @@ namespace Meblex.API.Controller
             OperationId = "UserUpdate")]
         [SwaggerResponse(200,"Successful client data update", typeof(ClientUpdateResponse))]
         [SwaggerResponse(500)]
+        [SwaggerResponse(404)]
         public async Task<IActionResult> UpdateUserData([FromBody] UserUpdateForm userUpdateForm)
         {
             var id = _jwtService.GetAccessTokenUserId(User);
@@ -62,7 +57,10 @@ namespace Meblex.API.Controller
         }
 
         [HttpPut("email")]
-        [SwaggerOperation(null, "Update user Email")]
+        [SwaggerOperation(
+            Summary = "Update client email",
+            Description = "Update user email from request body",
+            OperationId = "UserUpdateEmail")]
         [SwaggerResponse(204)]
         [SwaggerResponse(500)]
         [SwaggerResponse(409)]
@@ -81,7 +79,10 @@ namespace Meblex.API.Controller
         }
 
         [HttpPut("password")]
-        [SwaggerOperation(null, "Update user Database")]
+        [SwaggerOperation(
+            Summary = "Update client password",
+            Description = "Update user password from request body",
+            OperationId = "UserUpdatePassword")]
         [SwaggerResponse(204)]
         [SwaggerResponse(500)]
         [SwaggerResponse(409)]
@@ -99,7 +100,10 @@ namespace Meblex.API.Controller
         }
 
         [HttpGet("check/password")]
-        [SwaggerOperation(null, "Check if user have the same password")]
+        [SwaggerOperation(
+            Summary = "Check user password",
+            Description = "Check if user has the same password already",
+            OperationId = "UserCheckPassword")]
         [SwaggerResponse(204)]
         [SwaggerResponse(500)]
         [SwaggerResponse(409)]
@@ -112,7 +116,10 @@ namespace Meblex.API.Controller
         }
 
         [HttpGet("check/email")]
-        [SwaggerOperation(null,"Check if user has the same Email")]
+        [SwaggerOperation(
+            Summary = "Update user email",
+            Description = "Check if user has the same email already or if exist in db",
+            OperationId = "UserCheckEmail")]
         [SwaggerResponse(204)]
         [SwaggerResponse(500)]
         [SwaggerResponse(409)]
@@ -125,8 +132,13 @@ namespace Meblex.API.Controller
         }
 
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Get client data",
+            Description = "Receiving all client data",
+            OperationId = "UserGetData")]
         [SwaggerResponse(500)]
         [SwaggerResponse(200, null,typeof(ClientUpdateResponse))]
+        [SwaggerResponse(404)]
         public async Task<IActionResult> GetUserData()
         {
             var id = _jwtService.GetAccessTokenUserId(User);
