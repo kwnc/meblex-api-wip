@@ -1,9 +1,9 @@
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 WORKDIR /app
-#EXPOSE 80
-#EXPOSE 443
+EXPOSE 80
+EXPOSE 443
 ENV ASPNETCORE_URLS=http://+:5000
-EXPOSE 5555
+# EXPOSE 5555
 
 COPY ["Meblex.API/nginx.conf.sigil", "/app/"]
 
