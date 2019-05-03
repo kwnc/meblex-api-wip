@@ -47,7 +47,8 @@ namespace Meblex.API.Controller
         public async Task<IActionResult> Login([FromBody] UserLoginForm user)
         {
             var loginCheck = await _authService.CheckUser(user.Email, user.Password);
-            if (!loginCheck) throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Wrong password and/or email");
+            //            if (!loginCheck) throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Wrong password and/or email");
+
             var accessToken = await _authService.GetAccessToken(user.Email, user.Password);
             var refreshToken = await _authService.GetRefreshToken(user.Email, user.Password);
             var userData = await _userService.GetUserData(user.Email);
