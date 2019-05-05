@@ -35,7 +35,7 @@ namespace Meblex.API.Models
         [Required]
         public int PostCode { get; set; }
 
-        public int? NIP { get; set; }
+        public string NIP { get; set; }
 
         [Required]
         public virtual User User { get; set; }
