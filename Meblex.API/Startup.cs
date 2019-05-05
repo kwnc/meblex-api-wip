@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Hellang.Middleware.ProblemDetails;
 using Meblex.API.Context;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
