@@ -70,7 +70,7 @@ namespace Meblex.API.Controller
 //            var isMatching = await _userService.CheckIfEmailIsMatching(id, userEmailUpdateForm.OldEmail);
             var exist = await _userService.CheckIfUserWithEmailExist(userEmailUpdateForm.NewEmail);
 
-            if ( !exist) return StatusCode(409);
+            if (exist) return StatusCode(409);
 
             var isChanged = await _userService.UpdateUserEmail(id, userEmailUpdateForm.NewEmail);
 
@@ -117,7 +117,7 @@ namespace Meblex.API.Controller
 
         [HttpGet("check/email")]
         [SwaggerOperation(
-            Summary = "Update user email",
+            Summary = "Check if user email exist",
             Description = "Check if user has the same email already or if exist in db",
             OperationId = "UserCheckEmail")]
         [SwaggerResponse(204)]

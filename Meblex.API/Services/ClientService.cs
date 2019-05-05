@@ -64,11 +64,11 @@ namespace Meblex.API.Services
             return client.ClientId;
         }
 
-        public async Task<ClientUpdateResponse> GetClientData(int clientId)
+        public async Task<ClientUpdateResponse> GetClientData(int userId)
         {
-            var ClientId = Guard.Argument(clientId, nameof(clientId)).NotNegative();
+            var UserId = Guard.Argument(userId, nameof(userId)).NotNegative();
 
-            var client = await _context.Clients.SingleOrDefaultAsync(x => x.ClientId == ClientId);
+            var client = await _context.Clients.SingleOrDefaultAsync(x => x.User.UserId == UserId);
 
             var clientDto = _mapper.Map<ClientUpdateResponse>(client);
 
