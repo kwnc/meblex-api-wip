@@ -43,7 +43,7 @@ namespace Meblex.API.Services
             clientDb.Name = !string.IsNullOrEmpty(Client.Name) ? Client.Name : clientDb.Name; 
             clientDb.Address = !string.IsNullOrEmpty(Client.Address) ? Client.Address : clientDb.Address;
             clientDb.City = !string.IsNullOrEmpty(Client.City) ? Client.City : clientDb.City;
-            clientDb.NIP = !string.IsNullOrEmpty(Client.NIP) ? int.Parse(Client.NIP) : clientDb.NIP;
+            clientDb.NIP = !string.IsNullOrEmpty(Client.NIP) ? Client.NIP : clientDb.NIP;
             clientDb.PostCode = !string.IsNullOrEmpty(Client.PostCode) ? int.Parse(Client.PostCode) : clientDb.PostCode;
             clientDb.State = !string.IsNullOrEmpty(Client.State) ? Client.State : clientDb.State;
 

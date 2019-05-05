@@ -117,7 +117,7 @@ namespace Meblex.API.Services
                 Name = UserRegisterForm.Name,
                 PostCode = int.Parse(UserRegisterForm.PostCode),
                 State = UserRegisterForm.State,
-                NIP = UserRegisterForm.NIP != null ? int.Parse(UserRegisterForm.NIP) : (int?) null
+                NIP = UserRegisterForm.NIP
             };
 
             _context.Clients.Add(client);

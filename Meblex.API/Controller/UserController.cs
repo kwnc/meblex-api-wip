@@ -67,10 +67,10 @@ namespace Meblex.API.Controller
         public async Task<IActionResult> UpdateUserEmail([FromBody] UserEmailUpdateForm userEmailUpdateForm )
         {
             var id = _jwtService.GetAccessTokenUserId(User);
-            var isMatching = await _userService.CheckIfEmailIsMatching(id, userEmailUpdateForm.OldEmail);
+//            var isMatching = await _userService.CheckIfEmailIsMatching(id, userEmailUpdateForm.OldEmail);
             var exist = await _userService.CheckIfUserWithEmailExist(userEmailUpdateForm.NewEmail);
 
-            if (!isMatching || !exist) return StatusCode(409);
+            if ( !exist) return StatusCode(409);
 
             var isChanged = await _userService.UpdateUserEmail(id, userEmailUpdateForm.NewEmail);
 

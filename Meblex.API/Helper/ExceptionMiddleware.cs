@@ -31,13 +31,13 @@ namespace Meblex.API.Helper
             }
             catch (HttpStatusCodeException ex)
             {
-                _logger.LogError($"Something went wrong: {ex}");
+                _logger.LogError($"Something went wrong: {ex}", Activity.Current?.Id ?? httpContext.TraceIdentifier);
                 
                 await HandleExceptionAsync(httpContext, ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong: {ex}");
+                _logger.LogError($"Something went wrong: {ex}", Activity.Current?.Id ?? httpContext.TraceIdentifier);
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
