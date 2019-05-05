@@ -12,8 +12,8 @@ namespace Meblex.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseKestrel()
-                .UseIISIntegration()
+//                .UseKestrel()
+//                .UseIISIntegration()
 //                .UseUrls("http://+:5555")
                 .UseStartup<Startup>();
     }
