@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Meblex.API.Helper
 {
@@ -45,13 +47,14 @@ namespace Meblex.API.Helper
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            return context.Response.WriteAsync(new ExceptionDetails()
+            return context.Response.WriteAsync(ToJson(new ProblemDetails()
             {
                 Title = ReasonPhrases.GetReasonPhrase((int) HttpStatusCode.InternalServerError),
-                Error = exception.Message,
                 Status = (int) HttpStatusCode.InternalServerError,
-                TraceId = Activity.Current?.Id ?? context.TraceIdentifier
-            }.ToString());
+                Detail = exception.Message,
+                Extensions =
+                    {new KeyValuePair<string, object>("traceId", Activity.Current?.Id ?? context.TraceIdentifier)}
+            }));
         }
 
         private static Task HandleExceptionAsync(HttpContext context, HttpStatusCodeException exception)
@@ -59,13 +62,23 @@ namespace Meblex.API.Helper
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int) exception.StatusCode;
 
-            return context.Response.WriteAsync(new ExceptionDetails()
+
+            return context.Response.WriteAsync(ToJson(new ProblemDetails()
             {
-                Title = ReasonPhrases.GetReasonPhrase((int) exception.StatusCode),
-                Error = exception.Message,
-                Status = (int) exception.StatusCode,
-                TraceId = Activity.Current?.Id ?? context.TraceIdentifier
-            }.ToString());
+                Title = ReasonPhrases.GetReasonPhrase((int)exception.StatusCode),
+                Status = (int)exception.StatusCode,
+                Detail = exception.Message,
+                Extensions = { new KeyValuePair<string, object>("traceId", Activity.Current?.Id ?? context.TraceIdentifier) }
+            }));
+        }
+
+        private static string ToJson(object obj)
+        {
+            var serializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+            return JsonConvert.SerializeObject(obj, serializerSettings);
         }
     }
 }
