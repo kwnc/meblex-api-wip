@@ -41,10 +41,12 @@ namespace Meblex.API.Services
 
             var hashedPassword = _authService.PasswordHasher(Password);
 
-            var match = await _context.Users.SingleOrDefaultAsync(x => x.UserId == Id && x.Password == hashedPassword);
+//            var match = await _context.Users.SingleOrDefaultAsync();
+            var match = await _context.Users.AnyAsync(x => x.UserId == Id && x.Password == hashedPassword);
 
-            if (match == null)
+            if (!match)
             {
+//                _context.Entry(match)
                 return false;
             }
 

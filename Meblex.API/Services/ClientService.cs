@@ -40,12 +40,12 @@ namespace Meblex.API.Services
 //                            p.GetValue(info) != null))));
 
 
-            clientDb.Name = !string.IsNullOrEmpty(Client.Name) ? Client.Name : clientDb.Name; 
-            clientDb.Address = !string.IsNullOrEmpty(Client.Address) ? Client.Address : clientDb.Address;
-            clientDb.City = !string.IsNullOrEmpty(Client.City) ? Client.City : clientDb.City;
-            clientDb.NIP = !string.IsNullOrEmpty(Client.NIP) ? Client.NIP : clientDb.NIP;
-            clientDb.PostCode = !string.IsNullOrEmpty(Client.PostCode) ? int.Parse(Client.PostCode) : clientDb.PostCode;
-            clientDb.State = !string.IsNullOrEmpty(Client.State) ? Client.State : clientDb.State;
+            clientDb.Name = Client.Name ?? clientDb.Name; 
+            clientDb.Address = Client.Address ?? clientDb.Address;
+            clientDb.City = Client.City ?? clientDb.City;
+            clientDb.NIP = Client.NIP ?? clientDb.NIP;
+            clientDb.PostCode = Client.PostCode != null ? int.Parse(Client.PostCode) : clientDb.PostCode;
+            clientDb.State = Client.State ?? clientDb.State;
 
             _context.Clients.Update(clientDb);
 
