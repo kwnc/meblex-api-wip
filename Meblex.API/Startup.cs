@@ -9,6 +9,8 @@ using Meblex.API.Context;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Services;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,8 +21,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace Meblex.API
 {
@@ -48,6 +52,8 @@ namespace Meblex.API
             services.AddTransient<IJWTService, JWTService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IClientService, ClientService>();
+            services.AddTransient<IPhotoService, PhotoService>();
+            services.AddTransient<IFurnitureService, FurnitureService>();
 
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -102,7 +108,19 @@ namespace Meblex.API
             ValidatorOptions.PropertyNameResolver = (type, info, arg3) => info.Name.ToLower();
             ValidatorOptions.CascadeMode = CascadeMode.Continue;
             ValidatorOptions.LanguageManager.Enabled = true;
-            services.AddMvc()
+            services.AddOData();
+            
+            services.AddMvc(options =>
+                {
+                    foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                    {
+                        outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                    }
+                    foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                    {
+                        inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                    }
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddFluentValidation(fv =>
                 {
@@ -173,7 +191,11 @@ namespace Meblex.API
                 .AllowCredentials());
             app.UseAuthentication();
             app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
-            app.UseMvc().UseSwagger();
+            app.UseMvc(routeBuilder =>
+            {
+                routeBuilder.EnableDependencyInjection();
+                routeBuilder.Expand().Select().Filter().Count().OrderBy();
+            }).UseSwagger();
             app.UseReDoc(r =>
             {
                 r.RoutePrefix = "redoc";
