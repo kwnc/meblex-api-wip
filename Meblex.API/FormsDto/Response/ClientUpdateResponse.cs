@@ -7,6 +7,7 @@ namespace Meblex.API.FormsDto.Response
 {
     public class ClientUpdateResponse
     {
+        public string Email { get; set; }
         public string Name { get; set; }
 
         public string NIP { get; set; }

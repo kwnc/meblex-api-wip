@@ -71,6 +71,7 @@ namespace Meblex.API.Services
             var client = await _context.Clients.SingleOrDefaultAsync(x => x.User.UserId == UserId);
 
             var clientDto = _mapper.Map<ClientUpdateResponse>(client);
+            clientDto.Email = client.User.Email;
 
             return clientDto;
         }
