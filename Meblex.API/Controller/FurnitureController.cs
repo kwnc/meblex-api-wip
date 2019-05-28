@@ -31,6 +31,7 @@ namespace Meblex.API.Controller
             _furnitureService = furnitureService;
         }
 
+        [DisableRequestSizeLimit]
         [HttpPost("add")]
         [SwaggerOperation(
             Summary = "Adding piece of furniture",
