@@ -17,7 +17,7 @@ namespace Meblex.API.Models
         public int Count { get; set; }
 
         [Required]
-        public int Price { get; set; }
+        public double Price { get; set; }
 
         [Required]
         [StringLength(32)]
