@@ -223,44 +223,46 @@ namespace Meblex.API.Services
             return toAdd.PartId;
         }
 
-        public object GetElementFormEntity<TEntity>(PropertyInfo field, int entityId) where TEntity : class
-        {
-            var Field = Guard.Argument(field, nameof(field)).NotNull();
-            var Id = Guard.Argument(entityId, nameof(entityId)).NotNegative();
-            var type = Field.GetType();
-            var row = _context.Find<TEntity>(Id);
-            var value = row.GetType().GetProperty(type.Name).GetValue(row);
-            return Convert.ChangeType(value, type); 
-        }
-
-        public string GetPhotoOfMaterialOrPattern<TEntity, TMainEntity>(int id) where TEntity : class where TMainEntity : class
+        public string GetMaterialPhoto(int id)
         {
             var Id = Guard.Argument(id, nameof(id)).NotNegative();
-            var row = _context.Set<TEntity>().FirstOrDefault(x => x.GetType().GetProperty(typeof(TMainEntity).Name+"Id").GetValue(x).Equals(Id));
-            if (row == null)
+
+            var photo = _context.Materials.FirstOrDefault(x => x.MaterialId == Id)?.Photo?.Path;
+
+            if (photo == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Something went wrong");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No photo found");
             }
 
-            var value = row.GetType().GetProperty("Path").GetValue(row);
-            return (string) value;
-
+            return photo;
         }
 
-        public Dictionary<int, string> GetAllPhotosOfMaterialOrPattern<TEntity, TMainEntity>() where TEntity : class where TMainEntity : class
+        public Dictionary<int, string> GetAllMaterialPhoto()
         {
-            var rows = _context.Set<TEntity>().ToList();
-            var dictionary = new Dictionary<int,string>();
-            foreach (var row in rows)
-            {
-                dictionary.Add((int) row.GetType().GetProperty(nameof(TMainEntity)+"Id").GetValue(row),
-                    (string) row.GetType().GetProperty("Path").GetValue(row));
-            }
+            var rows = _context.MaterialPhotos;
 
-            return dictionary;
+            return rows.ToDictionary(row => row.MaterialId, row => row.Path);
         }
 
+        public string GetPatternPhoto(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative();
 
+            var photo = _context.Patterns.FirstOrDefault(x => x.PatternId == Id)?.Photo?.Path;
 
+            if (photo == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No photo found");
+            }
+
+            return photo;
+        }
+
+        public Dictionary<int, string> GetAllPatternPhoto()
+        {
+            var rows = _context.PatternPhotos;
+
+            return rows.ToDictionary(row => row.PatternId, row => row.Path);
+        }
     }
 }
