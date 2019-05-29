@@ -88,7 +88,7 @@ namespace Meblex.API.Controller
         public IActionResult GetMaterial()
         {
             var responses = _furnitureService.GetAll<Material, MaterialResponse>();
-            var photos = _furnitureService.GetAllPhotosOfMaterialOrPattern<MaterialPhoto, Material>();
+            var photos = _furnitureService.GetAllMaterialPhoto();
             foreach (var photo in photos)
             {
                 var response = responses.FirstOrDefault(x => x.MaterialId == photo.Key);
@@ -105,7 +105,7 @@ namespace Meblex.API.Controller
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(ID);
-            var photo = _furnitureService.GetPhotoOfMaterialOrPattern<MaterialPhoto, Material>(ID);
+            var photo = _furnitureService.GetMaterialPhoto(ID);
             response.Photo = photo;
             return StatusCode(200, response);
         }
@@ -129,7 +129,7 @@ namespace Meblex.API.Controller
         public IActionResult GetPatterns()
         {
             var responses = _furnitureService.GetAll<Pattern, PatternsResponse>();
-            var photos = _furnitureService.GetAllPhotosOfMaterialOrPattern<PatternPhoto, Pattern>();
+            var photos = _furnitureService.GetAllPatternPhoto();
             foreach (var photo in photos)
             {
                 var response = responses.FirstOrDefault(x => x.PatternId == photo.Key);
@@ -146,7 +146,7 @@ namespace Meblex.API.Controller
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Pattern, PatternsResponse>(ID);
-            var photo = _furnitureService.GetPhotoOfMaterialOrPattern<PatternPhoto, Pattern>(ID);
+            var photo = _furnitureService.GetPatternPhoto(ID);
             response.Photo = photo;
             return StatusCode(200, response);
         }
