@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 
 namespace Meblex.API.FormsDto.Request
 {
@@ -10,5 +11,14 @@ namespace Meblex.API.FormsDto.Request
         public string Name { get; set; }
 
         public string Slug { get; set; }
+    }
+
+    public class MaterialAddFormValidator : AbstractValidator<MaterialAddForm>
+    {
+        public MaterialAddFormValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty().NotNull().MaximumLength(128);
+            RuleFor(x => x.Slug).NotEmpty().NotNull().MaximumLength(128);
+        }
     }
 }
