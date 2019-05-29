@@ -24,5 +24,7 @@ namespace Meblex.API.Context
         public DbSet<PieceOfFurniture> Furniture { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<MaterialPhoto> MaterialPhotos { get; set; }
+        public DbSet<PatternPhoto> PatternPhotos { get; set; }
     }
 }

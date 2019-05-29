@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AgileObjects.AgileMapper;
 using Dawn;
@@ -103,10 +104,12 @@ namespace Meblex.API.Controller
         [HttpPost("material")]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddColor([FromBody] MaterialAddForm material)
+        public IActionResult AddColor([ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [IFormFilePhoto] IFormFile photo)
         {
-            var id = _furnitureService.AddOne<Material, MaterialAddForm>(material, new List<string>() { nameof(MaterialAddForm.Name) });
+            var photoName = _photoService.SafePhotos(new List<IFormFile> {photo});
+            var id = _furnitureService.AddMaterial(photoName.Last(), json);
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
+            response.Photo = photoName.Last();
 
             return StatusCode(201, response);
         }
@@ -134,10 +137,12 @@ namespace Meblex.API.Controller
         [HttpPost("pattern")]
         [SwaggerResponse(200, "", typeof(PatternsResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddColor([FromBody] PatternAddForm pattern)
+        public IActionResult AddColor([ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [IFormFilePhoto] IFormFile photo)
         {
-            var id = _furnitureService.AddOne<Pattern, PatternAddForm>(pattern, new List<string>() { nameof(PatternAddForm.Name) });
-            var response = _furnitureService.GetSingle<Pattern, PatternsResponse>(id);
+            var photoName = _photoService.SafePhotos(new List<IFormFile> { photo });
+            var id = _furnitureService.AddPattern(photoName.Last(), json);
+            var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
+            response.Photo = photoName.Last();
 
             return StatusCode(201, response);
         }
