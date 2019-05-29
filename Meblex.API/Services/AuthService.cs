@@ -84,7 +84,8 @@ namespace Meblex.API.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, DbUser.UserId.ToString())
+                    new Claim(ClaimTypes.Name, DbUser.UserId.ToString()),
+                    new Claim(ClaimTypes.Role, DbUser.Role)
                 }),
                 Expires = DateTime.UtcNow.AddHours(ExpiredHours),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

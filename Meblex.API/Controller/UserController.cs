@@ -33,7 +33,7 @@ namespace Meblex.API.Controller
             Summary = "Update client data",
             Description = "Update user data from request body",
             OperationId = "UserUpdate")]
-        [SwaggerResponse(200,"Successful client data update", typeof(ClientUpdateResponse))]
+        [SwaggerResponse(200,"Successful client data update", typeof(ClientAllData))]
         [SwaggerResponse(500)]
         [SwaggerResponse(404)]
         public async Task<IActionResult> UpdateUserData([FromBody] UserUpdateForm userUpdateForm)
@@ -137,7 +137,7 @@ namespace Meblex.API.Controller
             Description = "Receiving all client data",
             OperationId = "UserGetData")]
         [SwaggerResponse(500)]
-        [SwaggerResponse(200, null,typeof(ClientUpdateResponse))]
+        [SwaggerResponse(200, null,typeof(ClientAllData))]
         [SwaggerResponse(404)]
         public async Task<IActionResult> GetUserData()
         {

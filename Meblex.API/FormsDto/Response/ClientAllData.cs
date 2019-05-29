@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Meblex.API.FormsDto.Response
 {
-    public class ClientUpdateResponse
+    public class ClientAllData
     {
         public string Email { get; set; }
         public string Name { get; set; }
@@ -19,5 +19,7 @@ namespace Meblex.API.FormsDto.Response
         public string City { get; set; }
 
         public string PostCode { get; set; }
+
+        public string Role { get; set; }
     }
 }

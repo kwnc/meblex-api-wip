@@ -9,6 +9,6 @@ namespace Meblex.API.Interfaces
     {
         Task<int> GetClientIdFromUserId(int userId);
         Task<bool> UpdateClientData(ClientUpdateDto client, int clientId);
-        Task<ClientUpdateResponse> GetClientData(int clientId);
+        Task<ClientAllData> GetClientData(int clientId);
     }
 }

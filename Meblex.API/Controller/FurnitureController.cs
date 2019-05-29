@@ -32,6 +32,7 @@ namespace Meblex.API.Controller
             _furnitureService = furnitureService;
         }
 
+        [Authorize(Roles = "Worker")]
         [DisableRequestSizeLimit]
         [HttpPost("add")]
         [SwaggerOperation(
@@ -70,6 +71,7 @@ namespace Meblex.API.Controller
             return StatusCode(200, response);
         }
 
+        [Authorize(Roles = "Worker")]
         [HttpPost("color")]
         [SwaggerResponse(200, "", typeof(ColorsResponse))]
         [SwaggerResponse(500)]
@@ -109,6 +111,7 @@ namespace Meblex.API.Controller
             response.Photo = photo;
             return StatusCode(200, response);
         }
+        [Authorize(Roles = "Worker")]
         [HttpPost("material")]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
@@ -150,6 +153,7 @@ namespace Meblex.API.Controller
             response.Photo = photo;
             return StatusCode(200, response);
         }
+        [Authorize(Roles = "Worker")]
         [HttpPost("pattern")]
         [SwaggerResponse(200, "", typeof(PatternsResponse))]
         [SwaggerResponse(500)]
@@ -183,6 +187,7 @@ namespace Meblex.API.Controller
             var response = _furnitureService.GetSingle<Room, RoomsResponse>(ID);
             return StatusCode(200, response);
         }
+        [Authorize(Roles = "Worker")]
         [HttpPost("room")]
         [SwaggerResponse(200, "", typeof(RoomsResponse))]
         [SwaggerResponse(500)]
@@ -214,7 +219,7 @@ namespace Meblex.API.Controller
             var response = _furnitureService.GetSingle<Part, PartResponse>(ID);
             return StatusCode(200, response);
         }
-
+        [Authorize(Roles = "Worker")]
         [HttpPost("part")]
         [SwaggerResponse(200, "", typeof(PartResponse))]
         [SwaggerResponse(500)]
@@ -247,6 +252,7 @@ namespace Meblex.API.Controller
             var response = _furnitureService.GetSingle<Category, CategoryResponse>(ID);
             return StatusCode(200, response);
         }
+        [Authorize(Roles = "Worker")]
         [HttpPost("category")]
         [SwaggerResponse(200, "", typeof(CategoryResponse))]
         [SwaggerResponse(500)]
