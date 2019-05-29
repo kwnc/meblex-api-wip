@@ -18,11 +18,13 @@ namespace Meblex.API.FormsDto.Response
 
         public string Description { get; set; }
 
-        public int CategoryId { get; set; }
-        public int RoomId { get; set; }
+
+        public CategoryResponse Category { get; set; }
+
+        public RoomsResponse Room { get; set; }
 
         public List<FurniturePartResponse> Parts { get; set; }
 
-        public List<string> PhotoNames { get; set; }
+        public List<string> Photos { get; set; }
     }
 }

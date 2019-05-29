@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using AgileObjects.AgileMapper;
+using Dawn;
 using Meblex.API.Context;
 using Meblex.API.DTO;
 using Meblex.API.FormsDto.Request;
@@ -107,19 +109,20 @@ namespace Meblex.API.Services
                 Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
                 Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
             }).ToList();
-
+            var room = pieceOfFurniture.Room;
+            var category = pieceOfFurniture.Category;
             return new FurnitureResponse()
             {
                 Id = pieceOfFurniture.PieceOfFurnitureId,
                 Name = pieceOfFurniture.Name,
                 Description = pieceOfFurniture.Description,
-                RoomId = pieceOfFurniture.RoomId,
-                CategoryId = pieceOfFurniture.CategoryId,
+                Room = Mapper.Map(room).ToANew<RoomsResponse>(),
+                Category = Mapper.Map(category).ToANew<CategoryResponse>(),
                 Parts = parts,
                 Size = pieceOfFurniture.Size,
                 Price = pieceOfFurniture.Price,
                 Count = pieceOfFurniture.Count,
-                PhotoNames = pieceOfFurniture.Photos?.Select(x => x.Path).ToList() ?? new List<string>()
+                Photos = pieceOfFurniture.Photos?.Select(x => x.Path).ToList() ?? new List<string>()
             };
         }
 
@@ -139,19 +142,21 @@ namespace Meblex.API.Services
                     Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
                     Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
                 }).ToList();
+                var room = pieceOfFurniture.Room;
+                var category = pieceOfFurniture.Category;
 
                 var add = new FurnitureResponse()
                 {
                     Id = pieceOfFurniture.PieceOfFurnitureId,
                     Name = pieceOfFurniture.Name,
                     Description = pieceOfFurniture.Description,
-                    RoomId = pieceOfFurniture.RoomId,
-                    CategoryId = pieceOfFurniture.CategoryId,
+                    Room = Mapper.Map(room).ToANew<RoomsResponse>(),
+                    Category = Mapper.Map(category).ToANew<CategoryResponse>(),
                     Parts = parts,
                     Size = pieceOfFurniture.Size,
                     Price = pieceOfFurniture.Price,
                     Count = pieceOfFurniture.Count,
-                    PhotoNames = pieceOfFurniture.Photos.Select(x => x.Path).ToList()
+                    Photos = pieceOfFurniture.Photos.Select(x => x.Path).ToList()
                 };
                 response.Add(add);
             }
@@ -216,6 +221,43 @@ namespace Meblex.API.Services
             }
 
             return toAdd.PartId;
+        }
+
+        public object GetElementFormEntity<TEntity>(PropertyInfo field, int entityId) where TEntity : class
+        {
+            var Field = Guard.Argument(field, nameof(field)).NotNull();
+            var Id = Guard.Argument(entityId, nameof(entityId)).NotNegative();
+            var type = Field.GetType();
+            var row = _context.Find<TEntity>(Id);
+            var value = row.GetType().GetProperty(type.Name).GetValue(row);
+            return Convert.ChangeType(value, type); 
+        }
+
+        public string GetPhotoOfMaterialOrPattern<TEntity, TMainEntity>(int id) where TEntity : class where TMainEntity : class
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative();
+            var row = _context.Set<TEntity>().FirstOrDefault(x => x.GetType().GetProperty(typeof(TMainEntity).Name+"Id").GetValue(x).Equals(Id));
+            if (row == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Something went wrong");
+            }
+
+            var value = row.GetType().GetProperty("Path").GetValue(row);
+            return (string) value;
+
+        }
+
+        public Dictionary<int, string> GetAllPhotosOfMaterialOrPattern<TEntity, TMainEntity>() where TEntity : class where TMainEntity : class
+        {
+            var rows = _context.Set<TEntity>().ToList();
+            var dictionary = new Dictionary<int,string>();
+            foreach (var row in rows)
+            {
+                dictionary.Add((int) row.GetType().GetProperty(nameof(TMainEntity)+"Id").GetValue(row),
+                    (string) row.GetType().GetProperty("Path").GetValue(row));
+            }
+
+            return dictionary;
         }
 
 
