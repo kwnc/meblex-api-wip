@@ -87,8 +87,14 @@ namespace Meblex.API.Controller
         [SwaggerResponse(500)]
         public IActionResult GetMaterial()
         {
-            var response = _furnitureService.GetAll<Material, MaterialResponse>();
-            return StatusCode(200, response);
+            var responses = _furnitureService.GetAll<Material, MaterialResponse>();
+            var photos = _furnitureService.GetAllPhotosOfMaterialOrPattern<MaterialPhoto, Material>();
+            foreach (var photo in photos)
+            {
+                var response = responses.FirstOrDefault(x => x.MaterialId == photo.Key);
+                response.Photo = photo.Value;
+            }
+            return StatusCode(200, responses);
         }
         [AllowAnonymous]
         [HttpGet("material/{id}")]
@@ -99,12 +105,14 @@ namespace Meblex.API.Controller
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(ID);
+            var photo = _furnitureService.GetPhotoOfMaterialOrPattern<MaterialPhoto, Material>(ID);
+            response.Photo = photo;
             return StatusCode(200, response);
         }
         [HttpPost("material")]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddColor([ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [IFormFilePhoto] IFormFile photo)
+        public IActionResult AddMaterial([ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [IFormFilePhoto] IFormFile photo)
         {
             var photoName = _photoService.SafePhotos(new List<IFormFile> {photo});
             var id = _furnitureService.AddMaterial(photoName.Last(), json);
@@ -120,8 +128,14 @@ namespace Meblex.API.Controller
         [SwaggerResponse(500)]
         public IActionResult GetPatterns()
         {
-            var response = _furnitureService.GetAll<Pattern, PatternsResponse>();
-            return StatusCode(200, response);
+            var responses = _furnitureService.GetAll<Pattern, PatternsResponse>();
+            var photos = _furnitureService.GetAllPhotosOfMaterialOrPattern<PatternPhoto, Pattern>();
+            foreach (var photo in photos)
+            {
+                var response = responses.FirstOrDefault(x => x.PatternId == photo.Key);
+                response.Photo = photo.Value;
+            }
+            return StatusCode(200, responses);
         }
         [AllowAnonymous]
         [HttpGet("pattern/{id}")]
@@ -132,12 +146,14 @@ namespace Meblex.API.Controller
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Pattern, PatternsResponse>(ID);
+            var photo = _furnitureService.GetPhotoOfMaterialOrPattern<PatternPhoto, Pattern>(ID);
+            response.Photo = photo;
             return StatusCode(200, response);
         }
         [HttpPost("pattern")]
         [SwaggerResponse(200, "", typeof(PatternsResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddColor([ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [IFormFilePhoto] IFormFile photo)
+        public IActionResult AddPattern([ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [IFormFilePhoto] IFormFile photo)
         {
             var photoName = _photoService.SafePhotos(new List<IFormFile> { photo });
             var id = _furnitureService.AddPattern(photoName.Last(), json);
@@ -170,7 +186,7 @@ namespace Meblex.API.Controller
         [HttpPost("room")]
         [SwaggerResponse(200, "", typeof(RoomsResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddColor([FromBody] RoomAddForm room)
+        public IActionResult AddRoom([FromBody] RoomAddForm room)
         {
             var id = _furnitureService.AddOne<Room, RoomAddForm>(room, new List<string>() { nameof(RoomAddForm.Name) });
             var response = _furnitureService.GetSingle<Room, RoomsResponse>(id);
@@ -234,7 +250,7 @@ namespace Meblex.API.Controller
         [HttpPost("category")]
         [SwaggerResponse(200, "", typeof(CategoryResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddColor([FromBody] CategoryAddForm category)
+        public IActionResult AddCategory([FromBody] CategoryAddForm category)
         {
             var id = _furnitureService.AddOne<Category, CategoryAddForm>(category, new List<string>() { nameof(CategoryAddForm.Name) });
             var response = _furnitureService.GetSingle<Category, CategoryResponse>(id);
