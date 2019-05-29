@@ -69,6 +69,30 @@ namespace Meblex.API.Services
             return pieceOfFurnitureInserted.Entity.PieceOfFurnitureId;
         }
 
+        public int AddMaterial(string photoName, MaterialAddForm material)
+        {
+            var id = AddOne<Material, MaterialAddForm>(material, new List<string>() {nameof(MaterialAddForm.Name)});
+            _context.MaterialPhotos.Add(new MaterialPhoto() {MaterialId = id, Path = photoName});
+            if (_context.SaveChanges() == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+            }
+
+            return id;
+        }
+
+        public int AddPattern(string photoName, PatternAddForm pattern)
+        {
+            var id = AddOne<Pattern, PatternAddForm>(pattern, new List<string>() { nameof(PatternAddForm.Name) });
+            _context.PatternPhotos.Add(new PatternPhoto() { PatternId = id, Path = photoName });
+            if (_context.SaveChanges() == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+            }
+
+            return id;
+        }
+
         public FurnitureResponse GetPieceOfFurniture(int id)
         {
             var pieceOfFurniture = _context.Furniture.Find(id);

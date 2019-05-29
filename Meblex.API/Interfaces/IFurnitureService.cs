@@ -12,6 +12,8 @@ namespace Meblex.API.Interfaces
     public interface IFurnitureService
     {
         Task<int> AddFurniture(List<string> photos, PieceOfFurnitureAddDto pieceOfFurniture);
+        int AddMaterial(string photoName, MaterialAddForm material);
+        int AddPattern(string photoName, PatternAddForm material);
         List<FurnitureResponse> GetAllFurniture();
         TResponse GetSingle<TEntity, TResponse>(int id) where TEntity : class where TResponse : class;
         List<TResponse> GetAll<TEntity, TResponse>() where TEntity : class where TResponse : class;

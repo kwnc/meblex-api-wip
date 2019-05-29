@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Meblex.API.Models
 {
@@ -21,5 +18,8 @@ namespace Meblex.API.Models
         public string Slug { get; set; }
 
         public virtual List<Part> Parts { get; set; }
+
+        [Required]
+        public virtual MaterialPhoto Photo { get; set; }
     }
 }
