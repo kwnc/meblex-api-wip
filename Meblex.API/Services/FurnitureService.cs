@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using AgileObjects.AgileMapper;
 using Meblex.API.Context;
 using Meblex.API.DTO;
+using Meblex.API.FormsDto.Request;
 using Meblex.API.FormsDto.Response;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Meblex.API.Services
 {
@@ -30,6 +30,12 @@ namespace Meblex.API.Services
             if (cat == null || room == null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Room or Category does not exist");
+            }
+
+            var duplicate = _context.Furniture.Any(x => x.Name == pieceOfFurniture.Name);
+            if (duplicate)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Piece of furniture already exist");
             }
 
             var pieceOfFurnitureInserted = _context.Furniture.Add(new PieceOfFurniture()
@@ -67,6 +73,17 @@ namespace Meblex.API.Services
         {
             var pieceOfFurniture = _context.Furniture.Find(id);
             if (pieceOfFurniture == null) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Furniture with that id does not exist");
+            var parts = pieceOfFurniture.Parts.Select(x => new FurniturePartResponse()
+            {
+                Name = x.Name,
+                Count = x.Count,
+                PartId = x.PartId,
+                Price = x.Price,
+                Material = Mapper.Map(x.Material).ToANew<MaterialResponse>(),
+                Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
+                Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
+            }).ToList();
+
             return new FurnitureResponse()
             {
                 Id = pieceOfFurniture.PieceOfFurnitureId,
@@ -74,11 +91,11 @@ namespace Meblex.API.Services
                 Description = pieceOfFurniture.Description,
                 RoomId = pieceOfFurniture.RoomId,
                 CategoryId = pieceOfFurniture.CategoryId,
-                PartsId = pieceOfFurniture.Parts.Select(x => x.PartId).ToList(),
+                Parts = parts,
                 Size = pieceOfFurniture.Size,
                 Price = pieceOfFurniture.Price,
                 Count = pieceOfFurniture.Count,
-                PhotoNames = pieceOfFurniture.Photos.Select(x => x.Path).ToList()
+                PhotoNames = pieceOfFurniture.Photos?.Select(x => x.Path).ToList() ?? new List<string>()
             };
         }
 
@@ -88,6 +105,17 @@ namespace Meblex.API.Services
             var response = new List<FurnitureResponse>();
             foreach (var pieceOfFurniture in furniture)
             {
+                var parts = pieceOfFurniture.Parts.Select(x => new FurniturePartResponse()
+                {
+                    Name = x.Name,
+                    Count = x.Count,
+                    PartId = x.PartId,
+                    Price = x.Price,
+                    Material = Mapper.Map(x.Material).ToANew<MaterialResponse>(),
+                    Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
+                    Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
+                }).ToList();
+
                 var add = new FurnitureResponse()
                 {
                     Id = pieceOfFurniture.PieceOfFurnitureId,
@@ -95,7 +123,7 @@ namespace Meblex.API.Services
                     Description = pieceOfFurniture.Description,
                     RoomId = pieceOfFurniture.RoomId,
                     CategoryId = pieceOfFurniture.CategoryId,
-                    PartsId = pieceOfFurniture.Parts.Select(x => x.PartId).ToList(),
+                    Parts = parts,
                     Size = pieceOfFurniture.Size,
                     Price = pieceOfFurniture.Price,
                     Count = pieceOfFurniture.Count,
@@ -119,6 +147,54 @@ namespace Meblex.API.Services
             var db = _context.Set<TEntity>().ToList();
             return db.Select(x => Mapper.Map(x).ToANew<TResponse>()).ToList();
         }
+
+        public int AddOne<TEntity, TDto>(TDto toAdd, List<string> duplicates) where TEntity : class where TDto : class
+        {
+            var propertiesToCheckDuplicates = duplicates.Select(x => typeof(TDto).GetProperty(x)).ToList();
+            var toDb = Mapper.Map(toAdd).ToANew<TEntity>();
+            var dbSet = _context.Set<TEntity>();
+            if (propertiesToCheckDuplicates != null)
+            {
+                foreach (var set in dbSet.ToList())
+                {
+                    foreach (var prop in propertiesToCheckDuplicates)
+                    {
+                        var p1 = set.GetType().GetProperty(prop.Name).GetValue(set, null);
+                        var p2 = prop.GetValue(toAdd, null);
+                        var duplicate = Equals(p1, p2);
+                        if (duplicate)
+                        {
+                            throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Already exist");
+                        }
+                    }
+                }
+                    
+            }
+            dbSet.Add(toDb);
+            
+            if (_context.SaveChanges() == 0) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data to db");
+
+            return (int) toDb.GetType().GetProperty(typeof(TEntity).Name + "Id").GetValue(toDb);
+        }
+
+        public int AddPart(PartAddForm part)
+        {
+            var toAdd = Mapper.Map(part).ToANew<Part>();
+            var duplicate = _context.Parts.Any(x => x.Name == part.Name && x.PieceOfFurnitureId == part.PieceOfFurnitureId);
+            if (duplicate)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Already exist");
+            }
+            _context.Parts.Add(toAdd);
+            if (_context.SaveChanges() == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+            }
+
+            return toAdd.PartId;
+        }
+
+
 
     }
 }

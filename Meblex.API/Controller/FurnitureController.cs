@@ -39,6 +39,7 @@ namespace Meblex.API.Controller
             OperationId = "AddPieceOfFurniture")]
         [SwaggerResponse(201, "", typeof(FurnitureResponse))]
         [SwaggerResponse(500)]
+        
         public async Task<IActionResult> Add([ModelBinder(BinderType = typeof(JsonModelBinder))] PieceOfFurnitureAddForm json, [IFormFilePhoto] List<IFormFile> photos)
         {
             var photosNames =_photoService.SafePhotos(photos);
@@ -49,6 +50,8 @@ namespace Meblex.API.Controller
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("colors")]
+        [SwaggerResponse(200, "", typeof(List<ColorsResponse>))]
+        [SwaggerResponse(500)]
         public IActionResult GetColors()
         {
             var response = _furnitureService.GetAll<Color, ColorsResponse>();
@@ -56,15 +59,31 @@ namespace Meblex.API.Controller
         }
         [AllowAnonymous]
         [HttpGet("color/{id}")]
+        [SwaggerResponse(200, "", typeof(ColorsResponse))]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
         public IActionResult GetColor(int id)
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Color, ColorsResponse>(ID);
             return StatusCode(200, response);
         }
+
+        [HttpPost("color")]
+        [SwaggerResponse(200, "", typeof(ColorsResponse))]
+        [SwaggerResponse(500)]
+        public IActionResult AddColor([FromBody] ColorAddForm color)
+        {
+            var id = _furnitureService.AddOne<Color, ColorAddForm>(color, new List<string>(){nameof(ColorAddForm.Name), nameof(ColorAddForm.HexCode)});
+            var response = _furnitureService.GetSingle<Color, ColorsResponse>(id);
+
+            return StatusCode(201, response);
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("materials")]
+        [SwaggerResponse(200, "", typeof(List<MaterialResponse>))]
+        [SwaggerResponse(500)]
         public IActionResult GetMaterial()
         {
             var response = _furnitureService.GetAll<Material, MaterialResponse>();
@@ -72,15 +91,30 @@ namespace Meblex.API.Controller
         }
         [AllowAnonymous]
         [HttpGet("material/{id}")]
+        [SwaggerResponse(200, "", typeof(MaterialResponse))]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
         public IActionResult GetMaterial(int id)
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(ID);
             return StatusCode(200, response);
         }
+        [HttpPost("material")]
+        [SwaggerResponse(200, "", typeof(MaterialResponse))]
+        [SwaggerResponse(500)]
+        public IActionResult AddColor([FromBody] MaterialAddForm material)
+        {
+            var id = _furnitureService.AddOne<Material, MaterialAddForm>(material, new List<string>() { nameof(MaterialAddForm.Name) });
+            var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
+
+            return StatusCode(201, response);
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("patterns")]
+        [SwaggerResponse(200, "", typeof(List<PatternsResponse>))]
+        [SwaggerResponse(500)]
         public IActionResult GetPatterns()
         {
             var response = _furnitureService.GetAll<Pattern, PatternsResponse>();
@@ -88,15 +122,30 @@ namespace Meblex.API.Controller
         }
         [AllowAnonymous]
         [HttpGet("pattern/{id}")]
+        [SwaggerResponse(200, "", typeof(PatternsResponse))]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
         public IActionResult GetPattern(int id)
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Pattern, PatternsResponse>(ID);
             return StatusCode(200, response);
         }
+        [HttpPost("pattern")]
+        [SwaggerResponse(200, "", typeof(PatternsResponse))]
+        [SwaggerResponse(500)]
+        public IActionResult AddColor([FromBody] PatternAddForm pattern)
+        {
+            var id = _furnitureService.AddOne<Pattern, PatternAddForm>(pattern, new List<string>() { nameof(PatternAddForm.Name) });
+            var response = _furnitureService.GetSingle<Pattern, PatternsResponse>(id);
+
+            return StatusCode(201, response);
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("rooms")]
+        [SwaggerResponse(200, "", typeof(List<RoomsResponse>))]
+        [SwaggerResponse(500)]
         public IActionResult GetRooms()
         {
             var response = _furnitureService.GetAll<Room, RoomsResponse>();
@@ -104,15 +153,30 @@ namespace Meblex.API.Controller
         }
         [AllowAnonymous]
         [HttpGet("room/{id}")]
+        [SwaggerResponse(200, "", typeof(RoomsResponse))]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
         public IActionResult GetRoom(int id)
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Room, RoomsResponse>(ID);
             return StatusCode(200, response);
         }
+        [HttpPost("room")]
+        [SwaggerResponse(200, "", typeof(RoomsResponse))]
+        [SwaggerResponse(500)]
+        public IActionResult AddColor([FromBody] RoomAddForm room)
+        {
+            var id = _furnitureService.AddOne<Room, RoomAddForm>(room, new List<string>() { nameof(RoomAddForm.Name) });
+            var response = _furnitureService.GetSingle<Room, RoomsResponse>(id);
+
+            return StatusCode(201, response);
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("parts")]
+        [SwaggerResponse(200, "", typeof(List<PartResponse>))]
+        [SwaggerResponse(500)]
         public IActionResult GetParts()
         {
             var response = _furnitureService.GetAll<Part, PartResponse>();
@@ -120,15 +184,32 @@ namespace Meblex.API.Controller
         }
         [AllowAnonymous]
         [HttpGet("part/{id}")]
+        [SwaggerResponse(200, "", typeof(PartResponse))]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
         public IActionResult GetPart(int id)
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Part, PartResponse>(ID);
             return StatusCode(200, response);
         }
+
+        [HttpPost("part")]
+        [SwaggerResponse(200, "", typeof(PartResponse))]
+        [SwaggerResponse(500)]
+        public IActionResult AddPart([FromBody] PartAddForm part)
+        {
+            var id = _furnitureService.AddPart(part);
+            var response = _furnitureService.GetSingle<Part, PartResponse>(id);
+            return StatusCode(201, response);
+
+        }
+
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("categories")]
+        [SwaggerResponse(200, "", typeof(List<CategoryResponse>))]
+        [SwaggerResponse(500)]
         public IActionResult GetCategories()
         {
             var response = _furnitureService.GetAll<Category, CategoryResponse>();
@@ -136,15 +217,30 @@ namespace Meblex.API.Controller
         }
         [AllowAnonymous]
         [HttpGet("category/{id}")]
+        [SwaggerResponse(200, "", typeof(CategoryResponse))]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
         public IActionResult GetCategory(int id)
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetSingle<Category, CategoryResponse>(ID);
             return StatusCode(200, response);
         }
+        [HttpPost("category")]
+        [SwaggerResponse(200, "", typeof(CategoryResponse))]
+        [SwaggerResponse(500)]
+        public IActionResult AddColor([FromBody] CategoryAddForm category)
+        {
+            var id = _furnitureService.AddOne<Category, CategoryAddForm>(category, new List<string>() { nameof(CategoryAddForm.Name) });
+            var response = _furnitureService.GetSingle<Category, CategoryResponse>(id);
+
+            return StatusCode(201, response);
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("furniture")]
+        [SwaggerResponse(200, "", typeof(List<FurnitureResponse>))]
+        [SwaggerResponse(500)]
         public IActionResult GetFurniture()
         {
             var response = _furnitureService.GetAllFurniture();
@@ -152,6 +248,9 @@ namespace Meblex.API.Controller
         }
         [AllowAnonymous]
         [HttpGet("pieceOfFurniture/{id}")]
+        [SwaggerResponse(200, "", typeof(FurnitureResponse))]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
         public IActionResult GetPieceOfFurniture(int id)
         {
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
