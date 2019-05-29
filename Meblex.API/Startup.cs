@@ -194,7 +194,7 @@ namespace Meblex.API
             app.UseMvc(routeBuilder =>
             {
                 routeBuilder.EnableDependencyInjection();
-                routeBuilder.Expand().Select().Filter().Count().OrderBy();
+                routeBuilder.Expand().Select().Filter().Count().OrderBy().MaxTop(null);
             }).UseSwagger();
             app.UseReDoc(r =>
             {
