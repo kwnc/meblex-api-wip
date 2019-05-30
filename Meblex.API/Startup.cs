@@ -46,7 +46,7 @@ namespace Meblex.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-//            services.AddCors();
+            services.AddCors();
 
             services.AddTransient<JWTSettings>();
             services.AddTransient<IAuthService, AuthService>();
@@ -189,13 +189,12 @@ namespace Meblex.API
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-//            app.UseCors(x => x
-//                .AllowAnyOrigin()
-//                .AllowAnyMethod()
-//                .AllowAnyHeader()
-//                
-////                .AllowCredentials()
-//                 );
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+//                .AllowCredentials()
+                 );
             app.UseAuthentication();
             app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
             app.UseMvc(routeBuilder =>
