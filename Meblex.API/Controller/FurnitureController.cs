@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Spatial;
 using NJsonSchema;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -128,6 +129,7 @@ namespace Meblex.API.Controller
         [Authorize(Roles = "Worker")]
         [HttpPost("material")]
         [DisableRequestSizeLimit]
+        [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue, ValueLengthLimit = int.MaxValue)]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
         public async Task<IActionResult> AddMaterial([SwaggerParameter(Description = nameof(MaterialAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [SwaggerParameter(Required = true)] IFormFile photo)
