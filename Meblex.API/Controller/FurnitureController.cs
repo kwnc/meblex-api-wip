@@ -18,7 +18,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
 {
-    [Authorize]
+//    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -32,7 +32,7 @@ namespace Meblex.API.Controller
             _furnitureService = furnitureService;
         }
 
-        [Authorize(Roles = "Worker")]
+//        [Authorize(Roles = "Worker")]
         [DisableRequestSizeLimit]
         [HttpPost("add")]
         [SwaggerOperation(
@@ -44,7 +44,7 @@ namespace Meblex.API.Controller
         
         public async Task<IActionResult> Add([ModelBinder(BinderType = typeof(JsonModelBinder))] PieceOfFurnitureAddForm json, [IFormFilePhoto] List<IFormFile> photos)
         {
-            var photosNames =_photoService.SafePhotos(photos);
+            var photosNames =await _photoService.SafePhotos(photos);
             var id = await _furnitureService.AddFurniture(photosNames, Mapper.Map(json).ToANew<PieceOfFurnitureAddDto>());
             return StatusCode(201, _furnitureService.GetPieceOfFurniture(id));
         }
@@ -115,12 +115,12 @@ namespace Meblex.API.Controller
         [HttpPost("material")]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddMaterial([ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [IFormFilePhoto] IFormFile photo)
+        public async Task<IActionResult> AddMaterial([ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [IFormFilePhoto] IFormFile photo)
         {
-            var photoName = _photoService.SafePhotos(new List<IFormFile> {photo});
-            var id = _furnitureService.AddMaterial(photoName.Last(), json);
+            var photoName = await _photoService.SafePhoto(photo);
+            var id = _furnitureService.AddMaterial(photoName, json);
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
-            response.Photo = photoName.Last();
+            response.Photo = photoName;
 
             return StatusCode(201, response);
         }
@@ -157,12 +157,12 @@ namespace Meblex.API.Controller
         [HttpPost("pattern")]
         [SwaggerResponse(200, "", typeof(PatternsResponse))]
         [SwaggerResponse(500)]
-        public IActionResult AddPattern([ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [IFormFilePhoto] IFormFile photo)
+        public async Task<IActionResult> AddPattern([ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [IFormFilePhoto] IFormFile photo)
         {
-            var photoName = _photoService.SafePhotos(new List<IFormFile> { photo });
-            var id = _furnitureService.AddPattern(photoName.Last(), json);
+            var photoName = await _photoService.SafePhoto(photo);
+            var id = _furnitureService.AddPattern(photoName, json);
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
-            response.Photo = photoName.Last();
+            response.Photo = photoName;
 
             return StatusCode(201, response);
         }

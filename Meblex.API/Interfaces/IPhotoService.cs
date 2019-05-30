@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace Meblex.API.Interfaces
 {
     public interface IPhotoService
     {
-        List<string> SafePhotos(List<IFormFile> photos);
+        Task<List<string>> SafePhotos(List<IFormFile> photos);
+        Task<string> SafePhoto(IFormFile photo);
     }
 }

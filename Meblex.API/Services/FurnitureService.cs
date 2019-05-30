@@ -129,23 +129,22 @@ namespace Meblex.API.Services
         public List<FurnitureResponse> GetAllFurniture()
         {
             var furniture = _context.Furniture;
-            var response = new List<FurnitureResponse>();
-            foreach (var pieceOfFurniture in furniture)
-            {
-                var parts = pieceOfFurniture.Parts.Select(x => new FurniturePartResponse()
-                {
-                    Name = x.Name,
-                    Count = x.Count,
-                    PartId = x.PartId,
-                    Price = x.Price,
-                    Material = Mapper.Map(x.Material).ToANew<MaterialResponse>(),
-                    Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
-                    Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
-                }).ToList();
-                var room = pieceOfFurniture.Room;
-                var category = pieceOfFurniture.Category;
 
-                var add = new FurnitureResponse()
+            return (from pieceOfFurniture in furniture
+                let parts = pieceOfFurniture.Parts.Select(x => new FurniturePartResponse()
+                    {
+                        Name = x.Name,
+                        Count = x.Count,
+                        PartId = x.PartId,
+                        Price = x.Price,
+                        Material = Mapper.Map(x.Material).ToANew<MaterialResponse>(),
+                        Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
+                        Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
+                    })
+                    .ToList()
+                let room = pieceOfFurniture.Room
+                let category = pieceOfFurniture.Category
+                select new FurnitureResponse()
                 {
                     Id = pieceOfFurniture.PieceOfFurnitureId,
                     Name = pieceOfFurniture.Name,
@@ -157,11 +156,7 @@ namespace Meblex.API.Services
                     Price = pieceOfFurniture.Price,
                     Count = pieceOfFurniture.Count,
                     Photos = pieceOfFurniture.Photos.Select(x => x.Path).ToList()
-                };
-                response.Add(add);
-            }
-
-            return response;
+                }).ToList();
         }
 
         public TResponse GetSingle<TEntity, TResponse>(int id) where TEntity : class where TResponse : class
