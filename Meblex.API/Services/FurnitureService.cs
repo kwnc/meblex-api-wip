@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -31,7 +32,7 @@ namespace Meblex.API.Services
 
             if (cat == null || room == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Room or Category does not exist");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Room or Category does not exist");
             }
 
             var duplicate = _context.Furniture.Any(x => x.Name == pieceOfFurniture.Name);
@@ -97,9 +98,10 @@ namespace Meblex.API.Services
 
         public FurnitureResponse GetPieceOfFurniture(int id)
         {
-            var pieceOfFurniture = _context.Furniture.Find(id);
-            if (pieceOfFurniture == null) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Furniture with that id does not exist");
-            var parts = pieceOfFurniture.Parts.Select(x => new FurniturePartResponse()
+            var Id = Guard.Argument(id, nameof(id)).NotZero().NotNegative().Value;
+            var pieceOfFurniture = _context.Furniture.Find(Id) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with that id does not exist");
+
+            var parts = pieceOfFurniture.Parts?.Select(x => new FurniturePartResponse()
             {
                 Name = x.Name,
                 Count = x.Count,
@@ -108,7 +110,7 @@ namespace Meblex.API.Services
                 Material = Mapper.Map(x.Material).ToANew<MaterialResponse>(),
                 Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
                 Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
-            }).ToList();
+            }).ToList() ?? new List<FurniturePartResponse>();
             var room = pieceOfFurniture.Room;
             var category = pieceOfFurniture.Category;
             return new FurnitureResponse()
@@ -130,8 +132,10 @@ namespace Meblex.API.Services
         {
             var furniture = _context.Furniture;
 
-            return (from pieceOfFurniture in furniture
-                let parts = pieceOfFurniture.Parts.Select(x => new FurniturePartResponse()
+            var response = new List<FurnitureResponse>();
+            foreach (var pieceOfFurniture in furniture)
+            {
+                var parts = pieceOfFurniture.Parts?.Select(x => new FurniturePartResponse()
                     {
                         Name = x.Name,
                         Count = x.Count,
@@ -141,10 +145,10 @@ namespace Meblex.API.Services
                         Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
                         Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
                     })
-                    .ToList()
-                let room = pieceOfFurniture.Room
-                let category = pieceOfFurniture.Category
-                select new FurnitureResponse()
+                    .ToList() ?? new List<FurniturePartResponse>();
+                var room = pieceOfFurniture.Room ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: "+pieceOfFurniture.PieceOfFurnitureId+" does not have room");
+                var category = pieceOfFurniture.Category ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: " + pieceOfFurniture.PieceOfFurnitureId + " does not have category");
+                var final = new FurnitureResponse()
                 {
                     Id = pieceOfFurniture.PieceOfFurnitureId,
                     Name = pieceOfFurniture.Name,
@@ -156,7 +160,11 @@ namespace Meblex.API.Services
                     Price = pieceOfFurniture.Price,
                     Count = pieceOfFurniture.Count,
                     Photos = pieceOfFurniture.Photos.Select(x => x.Path).ToList()
-                }).ToList();
+                };
+                response.Add(final);
+            }
+
+            return response;
         }
 
         public TResponse GetSingle<TEntity, TResponse>(int id) where TEntity : class where TResponse : class
@@ -241,7 +249,7 @@ namespace Meblex.API.Services
 
         public string GetPatternPhoto(int id)
         {
-            var Id = Guard.Argument(id, nameof(id)).NotNegative();
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero().Value;
 
             var photo = _context.Patterns.FirstOrDefault(x => x.PatternId == Id)?.Photo?.Path;
 
@@ -258,6 +266,13 @@ namespace Meblex.API.Services
             var rows = _context.PatternPhotos;
 
             return rows.ToDictionary(row => row.PatternId, row => row.Path);
+        }
+
+        public void RemoveById<TEntity>(int id) where TEntity : class
+        {
+            var toRemove = _context.Find<TEntity>(id);
+            if (toRemove == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound);
+            _context.Set<TEntity>().Remove(toRemove);
         }
     }
 }

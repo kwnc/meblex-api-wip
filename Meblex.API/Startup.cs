@@ -6,6 +6,7 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Meblex.API.Context;
+using Meblex.API.FormsDto.Request;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Services;
@@ -138,6 +139,9 @@ namespace Meblex.API
                 c.SwaggerDoc("v1", new Info() { Title = "Meblex API", Version = "v1" });
                 c.AddFluentValidationRules();
                 c.EnableAnnotations();
+                c.DocumentFilter<MiscFunctions.CustomModelDocumentFilter<PieceOfFurnitureAddForm>>();
+                c.DocumentFilter<MiscFunctions.CustomModelDocumentFilter<PatternAddForm>>();
+                c.DocumentFilter<MiscFunctions.CustomModelDocumentFilter<MaterialAddForm>>();
             });
 
             services.Configure<RequestLocalizationOptions>(opt =>
