@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Meblex.API.Migrations
 {
     [DbContext(typeof(MeblexDbContext))]
-    [Migration("20190402193505_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190530194628_Final")]
+    partial class Final
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Meblex.API.Models.Category", b =>
@@ -46,6 +46,8 @@ namespace Meblex.API.Migrations
                         .IsRequired()
                         .HasMaxLength(32);
 
+                    b.Property<string>("NIP");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(32);
@@ -53,10 +55,6 @@ namespace Meblex.API.Migrations
                     b.Property<int>("PostCode");
 
                     b.Property<string>("State")
-                        .IsRequired()
-                        .HasMaxLength(32);
-
-                    b.Property<string>("Street")
                         .IsRequired()
                         .HasMaxLength(32);
 
@@ -132,6 +130,25 @@ namespace Meblex.API.Migrations
                     b.HasKey("MaterialId");
 
                     b.ToTable("Materials");
+                });
+
+            modelBuilder.Entity("Meblex.API.Models.MaterialPhoto", b =>
+                {
+                    b.Property<int>("MaterialPhotoId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("MaterialId");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(132);
+
+                    b.HasKey("MaterialPhotoId");
+
+                    b.HasIndex("MaterialId")
+                        .IsUnique();
+
+                    b.ToTable("MaterialPhotos");
                 });
 
             modelBuilder.Entity("Meblex.API.Models.Order", b =>
@@ -257,6 +274,25 @@ namespace Meblex.API.Migrations
                     b.ToTable("Patterns");
                 });
 
+            modelBuilder.Entity("Meblex.API.Models.PatternPhoto", b =>
+                {
+                    b.Property<int>("PatternPhotoId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(132);
+
+                    b.Property<int>("PatternId");
+
+                    b.HasKey("PatternPhotoId");
+
+                    b.HasIndex("PatternId")
+                        .IsUnique();
+
+                    b.ToTable("PatternPhotos");
+                });
+
             modelBuilder.Entity("Meblex.API.Models.Photo", b =>
                 {
                     b.Property<int>("PhotoId")
@@ -282,16 +318,22 @@ namespace Meblex.API.Migrations
 
                     b.Property<int>("CategoryId");
 
+                    b.Property<int>("ColorId");
+
                     b.Property<int>("Count");
 
                     b.Property<string>("Description")
                         .IsRequired();
 
+                    b.Property<int>("MaterialId");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(32);
 
-                    b.Property<int>("Price");
+                    b.Property<int>("PatternId");
+
+                    b.Property<double>("Price");
 
                     b.Property<int>("RoomId");
 
@@ -302,6 +344,12 @@ namespace Meblex.API.Migrations
                     b.HasKey("PieceOfFurnitureId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("PatternId");
 
                     b.HasIndex("RoomId")
                         .IsUnique();
@@ -365,6 +413,14 @@ namespace Meblex.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Meblex.API.Models.MaterialPhoto", b =>
+                {
+                    b.HasOne("Meblex.API.Models.Material", "Material")
+                        .WithOne("Photo")
+                        .HasForeignKey("Meblex.API.Models.MaterialPhoto", "MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Meblex.API.Models.Order", b =>
                 {
                     b.HasOne("Meblex.API.Models.Client", "Client")
@@ -412,6 +468,14 @@ namespace Meblex.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Meblex.API.Models.PatternPhoto", b =>
+                {
+                    b.HasOne("Meblex.API.Models.Pattern", "Pattern")
+                        .WithOne("Photo")
+                        .HasForeignKey("Meblex.API.Models.PatternPhoto", "PatternId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Meblex.API.Models.Photo", b =>
                 {
                     b.HasOne("Meblex.API.Models.PieceOfFurniture", "PieceOfFurniture")
@@ -425,6 +489,21 @@ namespace Meblex.API.Migrations
                     b.HasOne("Meblex.API.Models.Category", "Category")
                         .WithMany("Furniture")
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Meblex.API.Models.Color", "Color")
+                        .WithMany("PieceOfFurniture")
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Meblex.API.Models.Material", "Material")
+                        .WithMany("PieceOfFurniture")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Meblex.API.Models.Pattern", "Pattern")
+                        .WithMany("PieceOfFurniture")
+                        .HasForeignKey("PatternId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Room", "Room")

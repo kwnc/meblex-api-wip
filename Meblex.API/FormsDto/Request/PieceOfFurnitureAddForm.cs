@@ -36,9 +36,12 @@ namespace Meblex.API.FormsDto.Request
     {
         public PieceOfFurnitureAddFormValidator()
         {
-            RuleFor(x => x.CategoryId).NotNull().NotEmpty().GreaterThan(-1);
-            RuleFor(x => x.RoomId).NotNull().NotEmpty().GreaterThan(-1);
-            RuleForEach(x => x.PartsId).NotEmpty().NotNull().GreaterThan(-1);
+            RuleFor(x => x.CategoryId).NotNull().NotEmpty().GreaterThan(0);
+            RuleFor(x => x.PatternId).NotNull().NotEmpty().GreaterThan(0);
+            RuleFor(x => x.ColorId).NotNull().NotEmpty().GreaterThan(0);
+            RuleFor(x => x.MaterialId).NotNull().NotEmpty().GreaterThan(0);
+            RuleFor(x => x.RoomId).NotNull().NotEmpty().GreaterThan(0);
+            RuleForEach(x => x.PartsId).NotEmpty().NotNull().GreaterThan(0);
             RuleFor(x => x.Name).NotNull().NotEmpty().MaximumLength(128);
             RuleFor(x => x.Count).NotNull().NotEmpty().GreaterThan(-1);
             RuleFor(x => x.Description).NotNull().NotEmpty();

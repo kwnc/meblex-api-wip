@@ -29,10 +29,10 @@ namespace Meblex.API.FormsDto.Request
         public PartAddFormValidator()
         {
             RuleFor(x => x.Name).NotEmpty().NotNull().MaximumLength(128);
-            RuleFor(x => x.PieceOfFurnitureId).NotEmpty().NotNull().GreaterThan(-1);
-            RuleFor(x => x.MaterialId).NotEmpty().NotNull().GreaterThan(-1);
-            RuleFor(x => x.PatternId).NotEmpty().NotNull().GreaterThan(-1);
-            RuleFor(x => x.ColorId).NotEmpty().NotNull().GreaterThan(-1);
+            RuleFor(x => x.PieceOfFurnitureId).NotEmpty().NotNull().GreaterThan(0);
+            RuleFor(x => x.MaterialId).NotEmpty().NotNull().GreaterThan(0);
+            RuleFor(x => x.PatternId).NotEmpty().NotNull().GreaterThan(0);
+            RuleFor(x => x.ColorId).NotEmpty().NotNull().GreaterThan(0);
             RuleFor(x => x.Count).NotEmpty().NotNull().GreaterThan(-1);
             RuleFor(x => x.Price).NotEmpty().NotNull().GreaterThan(-1);
         }
