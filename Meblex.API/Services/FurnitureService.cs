@@ -27,8 +27,8 @@ namespace Meblex.API.Services
         }
         public async Task<int> AddFurniture(List<string> photos, PieceOfFurnitureAddDto pieceOfFurniture)
         {
-            var cat = _context.Categories.FirstOrDefault(x => x.CategoryId == pieceOfFurniture.CategoryId);
-            var room = _context.Rooms.FirstOrDefault(x => x.RoomId == pieceOfFurniture.RoomId);
+            var cat = _context.Categories.SingleOrDefault(x => x.CategoryId == pieceOfFurniture.CategoryId);
+            var room = _context.Rooms.SingleOrDefault(x => x.RoomId == pieceOfFurniture.RoomId);
 
             if (cat == null || room == null)
             {
@@ -66,7 +66,7 @@ namespace Meblex.API.Services
 
             foreach (var partId in pieceOfFurniture.PartsId)
             {
-                var part =  await _context.Parts.FirstOrDefaultAsync(x => x.PartId == partId);
+                var part =  await _context.Parts.SingleOrDefaultAsync(x => x.PartId == partId);
                 part.PieceOfFurnitureId = pieceOfFurnitureInserted.Entity.PieceOfFurnitureId;
             }
 
