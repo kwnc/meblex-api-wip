@@ -67,7 +67,7 @@ namespace Meblex.API.Services
                     Key = photoName,
                     InputStream = photo.OpenReadStream()
                 };
-                awsRequest.Metadata.Add("x-amz-acl", "public-read");
+                awsRequest.CannedACL = "public-read";
                 await fileTransferUtility.UploadAsync(awsRequest);
 
             }
