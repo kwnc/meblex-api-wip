@@ -6,16 +6,11 @@ using Dawn;
 using Meblex.API.DTO;
 using Meblex.API.FormsDto.Request;
 using Meblex.API.FormsDto.Response;
-using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Spatial;
-using NJsonSchema;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
@@ -43,10 +38,10 @@ namespace Meblex.API.Controller
             OperationId = "AddPieceOfFurniture")]
         [SwaggerResponse(201, "", typeof(FurnitureResponse))]
         [SwaggerResponse(500)]
-        public async Task<IActionResult> Add([SwaggerParameter(Description = nameof(PieceOfFurnitureAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] PieceOfFurnitureAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] List<IFormFile> photos)
+        public async Task<IActionResult> Add([FromBody] PieceOfFurnitureAddForm json)
         {
 
-            var photosNames = await _photoService.SafePhotos(photos);
+            var photosNames = await _photoService.SafePhotos(json.Photos);
             var id = await _furnitureService.AddFurniture(photosNames, Mapper.Map(json).ToANew<PieceOfFurnitureAddDto>());
             return StatusCode(201, _furnitureService.GetPieceOfFurniture(id));
         }
@@ -129,12 +124,11 @@ namespace Meblex.API.Controller
         [Authorize(Roles = "Worker")]
         [HttpPost("material")]
         [DisableRequestSizeLimit]
-        [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue, ValueLengthLimit = int.MaxValue)]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
-        public async Task<IActionResult> AddMaterial([SwaggerParameter(Description = nameof(MaterialAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [SwaggerParameter(Required = true)] IFormFile photo)
+        public async Task<IActionResult> AddMaterial([FromBody] MaterialAddForm json)
         {
-            var photoName = await _photoService.SafePhoto(photo);
+            var photoName = await _photoService.SafePhoto(json.Photo);
             var id = _furnitureService.AddMaterial(photoName, json);
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
             response.Photo = photoName;
@@ -187,9 +181,9 @@ namespace Meblex.API.Controller
         [DisableRequestSizeLimit]
         [SwaggerResponse(200, "", typeof(PatternsResponse))]
         [SwaggerResponse(500)]
-        public async Task<IActionResult> AddPattern([SwaggerParameter(Description = nameof(PatternAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] IFormFile photo)
+        public async Task<IActionResult> AddPattern([FromBody] PatternAddForm json)
         {
-            var photoName = await _photoService.SafePhoto(photo);
+            var photoName = await _photoService.SafePhoto(json.Photo);
             var id = _furnitureService.AddPattern(photoName, json);
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
             response.Photo = photoName;

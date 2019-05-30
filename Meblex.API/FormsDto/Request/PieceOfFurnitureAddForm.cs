@@ -4,6 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
+using Meblex.API.Services;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace Meblex.API.FormsDto.Request
 {
@@ -28,6 +30,7 @@ namespace Meblex.API.FormsDto.Request
         public int PatternId { get; set; }
         public int ColorId { get; set; }
         public int RoomId { get; set; }
+        public List<string> Photos { get; set; }
 
         public List<int> PartsId { get; set; }
     }
