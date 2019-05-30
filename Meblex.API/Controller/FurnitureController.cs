@@ -34,8 +34,8 @@ namespace Meblex.API.Controller
         }
 
         [Authorize(Roles = "Worker")]
-        [DisableRequestSizeLimit]
         [HttpPost("add")]
+        [DisableRequestSizeLimit]
         [SwaggerOperation(
             Summary = "Adding piece of furniture",
             Description = "Can add piece of furniture",
@@ -127,6 +127,7 @@ namespace Meblex.API.Controller
         }
         [Authorize(Roles = "Worker")]
         [HttpPost("material")]
+        [DisableRequestSizeLimit]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
         public async Task<IActionResult> AddMaterial([SwaggerParameter(Description = nameof(MaterialAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] IFormFile photo)
@@ -181,6 +182,7 @@ namespace Meblex.API.Controller
         }
         [Authorize(Roles = "Worker")]
         [HttpPost("pattern")]
+        [DisableRequestSizeLimit]
         [SwaggerResponse(200, "", typeof(PatternsResponse))]
         [SwaggerResponse(500)]
         public async Task<IActionResult> AddPattern([SwaggerParameter(Description = nameof(PatternAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] IFormFile photo)

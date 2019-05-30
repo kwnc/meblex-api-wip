@@ -401,8 +401,7 @@ namespace Meblex.API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Furniture_RoomId",
                 table: "Furniture",
-                column: "RoomId",
-                unique: true);
+                column: "RoomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MaterialPhotos_MaterialId",
