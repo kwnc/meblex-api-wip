@@ -130,7 +130,7 @@ namespace Meblex.API.Controller
         [DisableRequestSizeLimit]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
-        public async Task<IActionResult> AddMaterial([SwaggerParameter(Description = nameof(MaterialAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] IFormFile photo)
+        public async Task<IActionResult> AddMaterial([SwaggerParameter(Description = nameof(MaterialAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [SwaggerParameter(Required = true)] IFormFile photo)
         {
             var photoName = await _photoService.SafePhoto(photo);
             var id = _furnitureService.AddMaterial(photoName, json);
