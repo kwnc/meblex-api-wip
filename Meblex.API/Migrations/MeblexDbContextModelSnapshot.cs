@@ -349,8 +349,7 @@ namespace Meblex.API.Migrations
 
                     b.HasIndex("PatternId");
 
-                    b.HasIndex("RoomId")
-                        .IsUnique();
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Furniture");
                 });
@@ -505,8 +504,8 @@ namespace Meblex.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Room", "Room")
-                        .WithOne("PieceOfFurniture")
-                        .HasForeignKey("Meblex.API.Models.PieceOfFurniture", "RoomId")
+                        .WithMany("PieceOfFurniture")
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
