@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Meblex.API.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Final : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -92,6 +92,46 @@ namespace Meblex.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MaterialPhotos",
+                columns: table => new
+                {
+                    MaterialPhotoId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Path = table.Column<string>(maxLength: 132, nullable: false),
+                    MaterialId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialPhotos", x => x.MaterialPhotoId);
+                    table.ForeignKey(
+                        name: "FK_MaterialPhotos_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "MaterialId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PatternPhotos",
+                columns: table => new
+                {
+                    PatternPhotoId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Path = table.Column<string>(maxLength: 132, nullable: false),
+                    PatternId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PatternPhotos", x => x.PatternPhotoId);
+                    table.ForeignKey(
+                        name: "FK_PatternPhotos_Patterns_PatternId",
+                        column: x => x.PatternId,
+                        principalTable: "Patterns",
+                        principalColumn: "PatternId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Furniture",
                 columns: table => new
                 {
@@ -99,11 +139,14 @@ namespace Meblex.API.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 32, nullable: false),
                     Count = table.Column<int>(nullable: false),
-                    Price = table.Column<int>(nullable: false),
+                    Price = table.Column<double>(nullable: false),
                     Size = table.Column<string>(maxLength: 32, nullable: false),
                     Description = table.Column<string>(nullable: false),
                     RoomId = table.Column<int>(nullable: false),
-                    CategoryId = table.Column<int>(nullable: false)
+                    CategoryId = table.Column<int>(nullable: false),
+                    ColorId = table.Column<int>(nullable: false),
+                    PatternId = table.Column<int>(nullable: false),
+                    MaterialId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,6 +156,24 @@ namespace Meblex.API.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Furniture_Colors_ColorId",
+                        column: x => x.ColorId,
+                        principalTable: "Colors",
+                        principalColumn: "ColorId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Furniture_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "MaterialId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Furniture_Patterns_PatternId",
+                        column: x => x.PatternId,
+                        principalTable: "Patterns",
+                        principalColumn: "PatternId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Furniture_Rooms_RoomId",
@@ -129,11 +190,11 @@ namespace Meblex.API.Migrations
                     ClientId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 32, nullable: false),
-                    Street = table.Column<string>(maxLength: 32, nullable: false),
                     Address = table.Column<string>(maxLength: 32, nullable: false),
                     State = table.Column<string>(maxLength: 32, nullable: false),
                     City = table.Column<string>(maxLength: 32, nullable: false),
                     PostCode = table.Column<int>(nullable: false),
+                    NIP = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -323,9 +384,30 @@ namespace Meblex.API.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Furniture_ColorId",
+                table: "Furniture",
+                column: "ColorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Furniture_MaterialId",
+                table: "Furniture",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Furniture_PatternId",
+                table: "Furniture",
+                column: "PatternId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Furniture_RoomId",
                 table: "Furniture",
                 column: "RoomId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialPhotos_MaterialId",
+                table: "MaterialPhotos",
+                column: "MaterialId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -370,6 +452,12 @@ namespace Meblex.API.Migrations
                 column: "PieceOfFurnitureId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PatternPhotos_PatternId",
+                table: "PatternPhotos",
+                column: "PatternId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Photos_PieceOfFurnitureId",
                 table: "Photos",
                 column: "PieceOfFurnitureId");
@@ -381,7 +469,13 @@ namespace Meblex.API.Migrations
                 name: "CustomSizeForms");
 
             migrationBuilder.DropTable(
+                name: "MaterialPhotos");
+
+            migrationBuilder.DropTable(
                 name: "OrderLines");
+
+            migrationBuilder.DropTable(
+                name: "PatternPhotos");
 
             migrationBuilder.DropTable(
                 name: "Photos");
@@ -396,15 +490,6 @@ namespace Meblex.API.Migrations
                 name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "Colors");
-
-            migrationBuilder.DropTable(
-                name: "Materials");
-
-            migrationBuilder.DropTable(
-                name: "Patterns");
-
-            migrationBuilder.DropTable(
                 name: "Furniture");
 
             migrationBuilder.DropTable(
@@ -412,6 +497,15 @@ namespace Meblex.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Colors");
+
+            migrationBuilder.DropTable(
+                name: "Materials");
+
+            migrationBuilder.DropTable(
+                name: "Patterns");
 
             migrationBuilder.DropTable(
                 name: "Rooms");

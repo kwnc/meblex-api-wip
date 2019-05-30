@@ -343,14 +343,11 @@ namespace Meblex.API.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("ColorId")
-                        .IsUnique();
+                    b.HasIndex("ColorId");
 
-                    b.HasIndex("MaterialId")
-                        .IsUnique();
+                    b.HasIndex("MaterialId");
 
-                    b.HasIndex("PatternId")
-                        .IsUnique();
+                    b.HasIndex("PatternId");
 
                     b.HasIndex("RoomId")
                         .IsUnique();
@@ -493,18 +490,18 @@ namespace Meblex.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Color", "Color")
-                        .WithOne("PieceOfFurniture")
-                        .HasForeignKey("Meblex.API.Models.PieceOfFurniture", "ColorId")
+                        .WithMany("PieceOfFurniture")
+                        .HasForeignKey("ColorId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Material", "Material")
-                        .WithOne("PieceOfFurniture")
-                        .HasForeignKey("Meblex.API.Models.PieceOfFurniture", "MaterialId")
+                        .WithMany("PieceOfFurniture")
+                        .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Pattern", "Pattern")
-                        .WithOne("PieceOfFurniture")
-                        .HasForeignKey("Meblex.API.Models.PieceOfFurniture", "PatternId")
+                        .WithMany("PieceOfFurniture")
+                        .HasForeignKey("PatternId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Room", "Room")

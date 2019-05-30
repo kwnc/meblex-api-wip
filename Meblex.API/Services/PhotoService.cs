@@ -31,7 +31,16 @@ namespace Meblex.API.Services
                 new BasicAWSCredentials(Environment.GetEnvironmentVariable("SPACES_ACCESS_KEY"),
                     Environment.GetEnvironmentVariable("SPACES_SECRET_KEY"));
             _client = new AmazonS3Client(_credentials,_config);
-            
+
+        }
+
+        public async Task SetPolicy()
+        {
+            var policy =
+                "{\r\n  \"Id\": \"Policy1559239182609\",\r\n  \"Version\": \"2012-10-17\",\r\n  \"Statement\": [\r\n    {\r\n      \"Sid\": \"Stmt1559239176582\",\r\n      \"Action\": [\r\n        \"s3:GetObject\"\r\n      ],\r\n      \"Effect\": \"Allow\",\r\n      \"Resource\": \"arn:aws:s3:::meblex-wip-cdn\",\r\n      \"Principal\": \"*\"\r\n    }\r\n  ]\r\n}";
+            var policyRequest = new PutBucketPolicyRequest(){BucketName = BucketName, Policy =policy};
+            await _client.PutBucketPolicyAsync(policyRequest);
+
         }
 
         public async Task<List<string>> SafePhotos(List<IFormFile> photos)
@@ -48,10 +57,20 @@ namespace Meblex.API.Services
 
         public async Task<string> SafePhoto(IFormFile photo)
         {
-            var fileTransferUtility = new TransferUtility(_client);
             var photoName = GetHashedName(photo);
-            await fileTransferUtility.UploadAsync(photo.OpenReadStream(), BucketName, photoName);
-            
+
+            using (var fileTransferUtility = new TransferUtility(_client))
+            {
+                var awsRequest = new TransferUtilityUploadRequest()
+                {
+                    BucketName = BucketName,
+                    Key = photoName,
+                    InputStream = photo.OpenReadStream()
+                };
+                awsRequest.CannedACL = "public-read";
+                await fileTransferUtility.UploadAsync(awsRequest);
+
+            }
             return photoName;
         }
 
