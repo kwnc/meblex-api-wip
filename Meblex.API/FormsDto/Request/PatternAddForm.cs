@@ -11,6 +11,8 @@ namespace Meblex.API.FormsDto.Request
         public string Name { get; set; }
 
         public string Slug { get; set; }
+
+        public string Photo { get; set; }
     }
 
     public class PatternAddFormValidator : AbstractValidator<PatternAddForm>

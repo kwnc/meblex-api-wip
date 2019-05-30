@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,17 +36,9 @@ namespace Meblex.API.Services
 
         }
 
-        public async Task SetPolicy()
+        public async Task<List<string>> SafePhotos(List<Byte[]> photos)
         {
-            var policy =
-                "{\r\n  \"Id\": \"Policy1559239182609\",\r\n  \"Version\": \"2012-10-17\",\r\n  \"Statement\": [\r\n    {\r\n      \"Sid\": \"Stmt1559239176582\",\r\n      \"Action\": [\r\n        \"s3:GetObject\"\r\n      ],\r\n      \"Effect\": \"Allow\",\r\n      \"Resource\": \"arn:aws:s3:::meblex-wip-cdn\",\r\n      \"Principal\": \"*\"\r\n    }\r\n  ]\r\n}";
-            var policyRequest = new PutBucketPolicyRequest(){BucketName = BucketName, Policy =policy};
-            await _client.PutBucketPolicyAsync(policyRequest);
-
-        }
-
-        public async Task<List<string>> SafePhotos(List<IFormFile> photos)
-        {
+            
             var photosName = new List<string>();
             foreach (var photo in photos)
             {
@@ -55,9 +49,10 @@ namespace Meblex.API.Services
             return photosName;
         }
 
-        public async Task<string> SafePhoto(IFormFile photo)
+        public async Task<string> SafePhoto(Byte[] photo)
         {
-            var photoName = GetHashedName(photo);
+            var stream = new MemoryStream(photo);
+            var photoName = GetHashedName(stream);
 
             using (var fileTransferUtility = new TransferUtility(_client))
             {
@@ -65,7 +60,7 @@ namespace Meblex.API.Services
                 {
                     BucketName = BucketName,
                     Key = photoName,
-                    InputStream = photo.OpenReadStream()
+                    InputStream = stream
                 };
                 awsRequest.CannedACL = "public-read";
                 await fileTransferUtility.UploadAsync(awsRequest);
@@ -74,11 +69,12 @@ namespace Meblex.API.Services
             return photoName;
         }
 
-        private string GetHashedName(IFormFile photo)
+        private string GetHashedName(Stream photo)
         {
+            var image = Image.FromStream(photo);
             var md5 = MD5.Create();
-            var hash = md5.ComputeHash(photo.OpenReadStream());
-            var photoName = BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant() + Path.GetExtension(photo.FileName);
+            var hash = md5.ComputeHash(photo);
+            var photoName = BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant() + image.RawFormat;
             return photoName;
         }
     }
