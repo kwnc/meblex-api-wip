@@ -19,7 +19,7 @@ namespace Meblex.API.Interfaces
         List<TResponse> GetAll<TEntity, TResponse>() where TEntity : class where TResponse : class;
         FurnitureResponse GetPieceOfFurniture(int id);
         int AddPart(PartAddForm part);
-
+        void RemoveById<TEntity>(int id) where TEntity : class;
         string GetMaterialPhoto(int id);
         string GetPatternPhoto(int id);
         Dictionary<int, string> GetAllPatternPhoto();

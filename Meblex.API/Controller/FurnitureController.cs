@@ -14,11 +14,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using NJsonSchema;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
 {
-//    [Authorize]
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -32,7 +33,7 @@ namespace Meblex.API.Controller
             _furnitureService = furnitureService;
         }
 
-//        [Authorize(Roles = "Worker")]
+        [Authorize(Roles = "Worker")]
         [DisableRequestSizeLimit]
         [HttpPost("add")]
         [SwaggerOperation(
@@ -41,10 +42,10 @@ namespace Meblex.API.Controller
             OperationId = "AddPieceOfFurniture")]
         [SwaggerResponse(201, "", typeof(FurnitureResponse))]
         [SwaggerResponse(500)]
-        
-        public async Task<IActionResult> Add([ModelBinder(BinderType = typeof(JsonModelBinder))] PieceOfFurnitureAddForm json, [IFormFilePhoto] List<IFormFile> photos)
+        public async Task<IActionResult> Add([SwaggerParameter(Description = nameof(PieceOfFurnitureAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] PieceOfFurnitureAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] List<IFormFile> photos)
         {
-            var photosNames =await _photoService.SafePhotos(photos);
+
+            var photosNames = await _photoService.SafePhotos(photos);
             var id = await _furnitureService.AddFurniture(photosNames, Mapper.Map(json).ToANew<PieceOfFurnitureAddDto>());
             return StatusCode(201, _furnitureService.GetPieceOfFurniture(id));
         }
@@ -82,6 +83,19 @@ namespace Meblex.API.Controller
 
             return StatusCode(201, response);
         }
+
+        [Authorize(Roles = "Worker")]
+        [HttpDelete("color/{id}")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200)]
+        public IActionResult RemoveColor(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero();
+
+            _furnitureService.RemoveById<Color>(Id);
+
+            return Ok();
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("materials")]
@@ -115,7 +129,7 @@ namespace Meblex.API.Controller
         [HttpPost("material")]
         [SwaggerResponse(200, "", typeof(MaterialResponse))]
         [SwaggerResponse(500)]
-        public async Task<IActionResult> AddMaterial([ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [IFormFilePhoto] IFormFile photo)
+        public async Task<IActionResult> AddMaterial([SwaggerParameter(Description = nameof(MaterialAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] MaterialAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] IFormFile photo)
         {
             var photoName = await _photoService.SafePhoto(photo);
             var id = _furnitureService.AddMaterial(photoName, json);
@@ -123,6 +137,18 @@ namespace Meblex.API.Controller
             response.Photo = photoName;
 
             return StatusCode(201, response);
+        }
+        [Authorize(Roles = "Worker")]
+        [HttpDelete("material/{id}")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200)]
+        public IActionResult RemoveMaterial(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero();
+
+            _furnitureService.RemoveById<Material>(Id);
+
+            return Ok();
         }
         [AllowAnonymous]
         [EnableQuery]
@@ -157,7 +183,7 @@ namespace Meblex.API.Controller
         [HttpPost("pattern")]
         [SwaggerResponse(200, "", typeof(PatternsResponse))]
         [SwaggerResponse(500)]
-        public async Task<IActionResult> AddPattern([ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [IFormFilePhoto] IFormFile photo)
+        public async Task<IActionResult> AddPattern([SwaggerParameter(Description = nameof(PatternAddForm), Required = true)][ModelBinder(BinderType = typeof(JsonModelBinder))] PatternAddForm json, [SwaggerParameter(Required = true)][IFormFilePhoto] IFormFile photo)
         {
             var photoName = await _photoService.SafePhoto(photo);
             var id = _furnitureService.AddPattern(photoName, json);
@@ -165,6 +191,18 @@ namespace Meblex.API.Controller
             response.Photo = photoName;
 
             return StatusCode(201, response);
+        }
+        [Authorize(Roles = "Worker")]
+        [HttpDelete("pattern/{id}")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200)]
+        public IActionResult RemovePattern(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero();
+
+            _furnitureService.RemoveById<Pattern>(Id);
+
+            return Ok();
         }
         [AllowAnonymous]
         [EnableQuery]
@@ -198,6 +236,18 @@ namespace Meblex.API.Controller
 
             return StatusCode(201, response);
         }
+        [Authorize(Roles = "Worker")]
+        [HttpDelete("room/{id}")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200)]
+        public IActionResult RemoveRoom(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero();
+
+            _furnitureService.RemoveById<Room>(Id);
+
+            return Ok();
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("parts")]
@@ -230,7 +280,18 @@ namespace Meblex.API.Controller
             return StatusCode(201, response);
 
         }
+        [Authorize(Roles = "Worker")]
+        [HttpDelete("part/{id}")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200)]
+        public IActionResult RemovePart(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero();
 
+            _furnitureService.RemoveById<Part>(Id);
+
+            return Ok();
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("categories")]
@@ -263,6 +324,18 @@ namespace Meblex.API.Controller
 
             return StatusCode(201, response);
         }
+        [Authorize(Roles = "Worker")]
+        [HttpDelete("category/{id}")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200)]
+        public IActionResult RemoveCategory(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero();
+
+            _furnitureService.RemoveById<Category>(Id);
+
+            return Ok();
+        }
         [AllowAnonymous]
         [EnableQuery]
         [HttpGet("furniture")]
@@ -283,6 +356,18 @@ namespace Meblex.API.Controller
             var ID = Guard.Argument(id, nameof(id)).NotNegative();
             var response = _furnitureService.GetPieceOfFurniture(ID);
             return StatusCode(200, response);
+        }
+        [Authorize(Roles = "Worker")]
+        [HttpDelete("pieceOfFurniture/{id}")]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(200)]
+        public IActionResult RemovePieceOfFurniture(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero();
+
+            _furnitureService.RemoveById<PieceOfFurniture>(Id);
+
+            return Ok();
         }
     }
 }
