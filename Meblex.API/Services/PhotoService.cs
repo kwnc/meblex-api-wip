@@ -57,10 +57,20 @@ namespace Meblex.API.Services
 
         public async Task<string> SafePhoto(IFormFile photo)
         {
-            var fileTransferUtility = new TransferUtility(_client);
             var photoName = GetHashedName(photo);
-            await fileTransferUtility.UploadAsync(photo.OpenReadStream(), BucketName, photoName);
-            await SetPolicy();
+
+            using (var fileTransferUtility = new TransferUtility(_client))
+            {
+                var awsRequest = new TransferUtilityUploadRequest()
+                {
+                    BucketName = BucketName,
+                    Key = photoName,
+                    InputStream = photo.OpenReadStream()
+                };
+                awsRequest.Metadata.Add("x-amz-acl", "public-read");
+                await fileTransferUtility.UploadAsync(awsRequest);
+
+            }
             return photoName;
         }
 
