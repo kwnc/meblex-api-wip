@@ -49,7 +49,10 @@ namespace Meblex.API.Services
                 RoomId = pieceOfFurniture.RoomId,
                 Size = pieceOfFurniture.Size,
                 Price = pieceOfFurniture.Price,
-                Count = pieceOfFurniture.Count
+                Count = pieceOfFurniture.Count,
+                MaterialId = pieceOfFurniture.MaterialId,
+                ColorId = pieceOfFurniture.ColorId,
+                PatternId = pieceOfFurniture.PatternId
             });
 
             _context.SaveChanges();
@@ -130,7 +133,16 @@ namespace Meblex.API.Services
 
         public List<FurnitureResponse> GetAllFurniture()
         {
-            var furniture = _context.Furniture;
+            var furniture = _context.Furniture
+                .Include(x => x.Category)
+                .Include(x => x.Room)
+                .Include(x => x.Photos)
+                .Include(x => x.Parts)
+                .ThenInclude(x => x.Pattern)
+                .Include(x => x.Parts)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.Parts)
+                .ThenInclude(x => x.Material);
 
             var response = new List<FurnitureResponse>();
             foreach (var pieceOfFurniture in furniture)
@@ -273,6 +285,7 @@ namespace Meblex.API.Services
             var toRemove = _context.Find<TEntity>(id);
             if (toRemove == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound);
             _context.Set<TEntity>().Remove(toRemove);
+            if(_context.SaveChanges() == 0) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to remove data");
         }
     }
 }

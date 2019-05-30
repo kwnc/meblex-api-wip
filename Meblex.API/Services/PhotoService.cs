@@ -51,6 +51,7 @@ namespace Meblex.API.Services
             var fileTransferUtility = new TransferUtility(_client);
             var photoName = GetHashedName(photo);
             await fileTransferUtility.UploadAsync(photo.OpenReadStream(), BucketName, photoName);
+            
             return photoName;
         }
 

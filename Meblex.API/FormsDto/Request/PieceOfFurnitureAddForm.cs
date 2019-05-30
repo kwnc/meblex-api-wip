@@ -24,6 +24,9 @@ namespace Meblex.API.FormsDto.Request
         public string Description { get; set; }
 
         public int CategoryId { get; set; }
+        public int MaterialId { get; set; }
+        public int PatternId { get; set; }
+        public int ColorId { get; set; }
         public int RoomId { get; set; }
 
         public List<int> PartsId { get; set; }
