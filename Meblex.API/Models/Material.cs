@@ -21,6 +21,6 @@ namespace Meblex.API.Models
 
         [Required]
         public virtual MaterialPhoto Photo { get; set; }
-        public virtual PieceOfFurniture PieceOfFurniture { get; set; }
+        public virtual List<PieceOfFurniture> PieceOfFurniture { get; set; }
     }
 }

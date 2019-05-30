@@ -51,8 +51,8 @@ namespace Meblex.API.Services
                 Price = pieceOfFurniture.Price,
                 Count = pieceOfFurniture.Count,
                 MaterialId = pieceOfFurniture.MaterialId,
-                ColorId = pieceOfFurniture.ColorId,
-                PatternId = pieceOfFurniture.PatternId
+                PatternId = pieceOfFurniture.PatternId,
+                ColorId = pieceOfFurniture.ColorId
             });
 
             _context.SaveChanges();
