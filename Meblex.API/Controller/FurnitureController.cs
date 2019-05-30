@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AgileObjects.AgileMapper;
@@ -7,16 +6,11 @@ using Dawn;
 using Meblex.API.DTO;
 using Meblex.API.FormsDto.Request;
 using Meblex.API.FormsDto.Response;
-using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Spatial;
-using NJsonSchema;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
@@ -47,7 +41,7 @@ namespace Meblex.API.Controller
         public async Task<IActionResult> Add([FromBody] PieceOfFurnitureAddForm json)
         {
 
-            var photosNames = await _photoService.SafePhotos(json.Photos.Select(Convert.FromBase64String).ToList());
+            var photosNames = await _photoService.SafePhotos(json.Photos);
             var id = await _furnitureService.AddFurniture(photosNames, Mapper.Map(json).ToANew<PieceOfFurnitureAddDto>());
             return StatusCode(201, _furnitureService.GetPieceOfFurniture(id));
         }
@@ -134,7 +128,7 @@ namespace Meblex.API.Controller
         [SwaggerResponse(500)]
         public async Task<IActionResult> AddMaterial([FromBody] MaterialAddForm json)
         {
-            var photoName = await _photoService.SafePhoto(Convert.FromBase64String(json.Photo));
+            var photoName = await _photoService.SafePhoto(json.Photo);
             var id = _furnitureService.AddMaterial(photoName, json);
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
             response.Photo = photoName;
@@ -189,7 +183,7 @@ namespace Meblex.API.Controller
         [SwaggerResponse(500)]
         public async Task<IActionResult> AddPattern([FromBody] PatternAddForm json)
         {
-            var photoName = await _photoService.SafePhoto(Convert.FromBase64String(json.Photo));
+            var photoName = await _photoService.SafePhoto(json.Photo);
             var id = _furnitureService.AddPattern(photoName, json);
             var response = _furnitureService.GetSingle<Material, MaterialResponse>(id);
             response.Photo = photoName;

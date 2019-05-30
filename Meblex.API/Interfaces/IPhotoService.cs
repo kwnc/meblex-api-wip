@@ -7,7 +7,7 @@ namespace Meblex.API.Interfaces
 {
     public interface IPhotoService
     {
-        Task<List<string>> SafePhotos(List<Byte[]> photos);
-        Task<string> SafePhoto(Byte[] photo);
+        Task<List<string>> SafePhotos(List<string> photos);
+        Task<string> SafePhoto(string photo);
     }
 }

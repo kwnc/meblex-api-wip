@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.Runtime;
@@ -36,7 +37,7 @@ namespace Meblex.API.Services
 
         }
 
-        public async Task<List<string>> SafePhotos(List<Byte[]> photos)
+        public async Task<List<string>> SafePhotos(List<string> photos)
         {
             
             var photosName = new List<string>();
@@ -49,10 +50,11 @@ namespace Meblex.API.Services
             return photosName;
         }
 
-        public async Task<string> SafePhoto(Byte[] photo)
+        public async Task<string> SafePhoto(string photo)
         {
-            var stream = new MemoryStream(photo);
-            var photoName = GetHashedName(stream);
+            var bytes = Convert.FromBase64String(photo.Split(',')[1]);
+            var stream = new MemoryStream(bytes);
+            var photoName = GetHashedName(bytes) + "." +Regex.Match(photo, @"data:.*?/(?<ext>.*?);base64").Groups["ext"].Value;
 
             using (var fileTransferUtility = new TransferUtility(_client))
             {
@@ -66,15 +68,15 @@ namespace Meblex.API.Services
                 await fileTransferUtility.UploadAsync(awsRequest);
 
             }
+            stream.Close();
             return photoName;
         }
 
-        private string GetHashedName(Stream photo)
+        private string GetHashedName(Byte[] photo)
         {
-            var image = Image.FromStream(photo);
             var md5 = MD5.Create();
             var hash = md5.ComputeHash(photo);
-            var photoName = BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant() + image.RawFormat;
+            var photoName = BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
             return photoName;
         }
     }
