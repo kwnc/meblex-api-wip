@@ -26,5 +26,7 @@ namespace Meblex.API.Models
 
         public virtual List<Part> Parts { get; set; }
 
+        public virtual PieceOfFurniture PieceOfFurniture { get; set; }
+
     }
 }

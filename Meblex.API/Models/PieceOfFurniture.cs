@@ -43,7 +43,24 @@ namespace Meblex.API.Models
         [Required]
         public int CategoryId { get; set; }
 
-        
+        [Required]
+        public virtual Color Color { get; set; }
+
+        [Required]
+        public int ColorId { get; set; }
+
+        [Required]
+        public virtual Pattern Pattern { get; set; }
+
+        [Required]
+        public int PatternId { get; set; }
+
+        [Required]
+        public virtual Material Material { get; set; }
+
+        [Required]
+        public int MaterialId { get; set; }
+
         public virtual List<Part> Parts { get; set; }
 
         public virtual List<OrderLine> OrderLines { get; set; }

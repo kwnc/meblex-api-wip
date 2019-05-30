@@ -280,6 +280,19 @@ namespace Meblex.API.Controller
             return StatusCode(201, response);
 
         }
+
+        [Authorize(Roles = "Worker")]
+        [HttpPost("parts")]
+        [SwaggerResponse(201, "" ,typeof(List<PartResponse>))]
+        [SwaggerResponse(500)]
+        public IActionResult AddParts([FromBody] List<PartAddForm> parts)
+        {
+            var ids = new List<int>();
+            parts.ForEach(x => ids.Add(_furnitureService.AddPart(x)));
+            var response = ids.Select(x => _furnitureService.GetSingle<Part, PartResponse>(x)).ToList();
+            return StatusCode(201, response);
+
+        }
         [Authorize(Roles = "Worker")]
         [HttpDelete("part/{id}")]
         [SwaggerResponse(500)]
