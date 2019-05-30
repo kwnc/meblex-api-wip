@@ -193,7 +193,9 @@ namespace Meblex.API
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .AllowCredentials());
+                
+//                .AllowCredentials()
+                 );
             app.UseAuthentication();
             app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
             app.UseMvc(routeBuilder =>
@@ -211,10 +213,6 @@ namespace Meblex.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meblex API");
             });
-
-            
-
-
         }
     }
 }
