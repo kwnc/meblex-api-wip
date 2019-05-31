@@ -116,6 +116,9 @@ namespace Meblex.API.Services
             }).ToList() ?? new List<FurniturePartResponse>();
             var room = pieceOfFurniture.Room;
             var category = pieceOfFurniture.Category;
+            var pattern = pieceOfFurniture.Pattern;
+            var color = pieceOfFurniture.Color;
+            var material = pieceOfFurniture.Material;
             return new FurnitureResponse()
             {
                 Id = pieceOfFurniture.PieceOfFurnitureId,
@@ -127,7 +130,10 @@ namespace Meblex.API.Services
                 Size = pieceOfFurniture.Size,
                 Price = pieceOfFurniture.Price,
                 Count = pieceOfFurniture.Count,
-                Photos = pieceOfFurniture.Photos?.Select(x => x.Path).ToList() ?? new List<string>()
+                Photos = pieceOfFurniture.Photos?.Select(x => x.Path).ToList() ?? new List<string>(),
+                Pattern = Mapper.Map(pattern).ToANew<PatternsResponse>(),
+                Material = Mapper.Map(material).ToANew<MaterialResponse>(),
+                Color = Mapper.Map(color).ToANew<ColorsResponse>()
             };
         }
 
@@ -160,6 +166,9 @@ namespace Meblex.API.Services
                     .ToList() ?? new List<FurniturePartResponse>();
                 var room = pieceOfFurniture.Room ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: "+pieceOfFurniture.PieceOfFurnitureId+" does not have room");
                 var category = pieceOfFurniture.Category ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: " + pieceOfFurniture.PieceOfFurnitureId + " does not have category");
+                var pattern = pieceOfFurniture.Pattern;
+                var color = pieceOfFurniture.Color;
+                var material = pieceOfFurniture.Material;
                 var final = new FurnitureResponse()
                 {
                     Id = pieceOfFurniture.PieceOfFurnitureId,
@@ -171,7 +180,10 @@ namespace Meblex.API.Services
                     Size = pieceOfFurniture.Size,
                     Price = pieceOfFurniture.Price,
                     Count = pieceOfFurniture.Count,
-                    Photos = pieceOfFurniture.Photos.Select(x => x.Path).ToList()
+                    Photos = pieceOfFurniture.Photos.Select(x => x.Path).ToList(),
+                    Pattern = Mapper.Map(pattern).ToANew<PatternsResponse>(),
+                    Material = Mapper.Map(material).ToANew<MaterialResponse>(),
+                    Color = Mapper.Map(color).ToANew<ColorsResponse>()
                 };
                 response.Add(final);
             }

@@ -25,6 +25,10 @@ namespace Meblex.API.FormsDto.Response
 
         public List<FurniturePartResponse> Parts { get; set; }
 
+        public MaterialResponse Material { get; set; }
+        public ColorsResponse Color { get; set; }
+        public PatternsResponse Pattern { get; set; }
+
         public List<string> Photos { get; set; }
     }
 }
