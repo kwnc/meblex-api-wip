@@ -23,6 +23,9 @@ namespace Meblex.API.Models
         public int ClientId { get; set; }
 
         [Required]
+        public float Price { get; set; }
+
+        [Required]
         public virtual PieceOfFurniture PieceOfFurniture { get; set; }
 
         [Required]
