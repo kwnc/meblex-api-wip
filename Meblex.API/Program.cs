@@ -12,11 +12,11 @@ namespace Meblex.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseKestrel(x =>
-                {
-                    x.Limits.MaxRequestBodySize = null;
-                    x.Limits.MaxConcurrentConnections = null;
-                })
+//                .UseKestrel(x =>
+//                {
+//                    x.Limits.MaxRequestBodySize = null;
+//                    x.Limits.MaxConcurrentConnections = null;
+//                })
 //                .UseIISIntegration()
 //                .UseUrls("http://+:5555")
                 .UseStartup<Startup>();

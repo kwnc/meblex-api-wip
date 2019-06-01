@@ -241,6 +241,11 @@ namespace Meblex.API.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Already exist");
             }
+
+            toAdd.Color = _context.Colors.Find(part.ColorId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Color not found"); 
+            toAdd.Pattern = _context.Patterns.Find(part.PatternId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Pattern not found"); 
+            toAdd.Material = _context.Materials.Find(part.MaterialId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Material not found"); 
+            toAdd.PieceOfFurniture = _context.Furniture.Find(part.PieceOfFurnitureId) ??  throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Piece of furniture not found"); ;
             _context.Parts.Add(toAdd);
             if (_context.SaveChanges() == 0)
             {
