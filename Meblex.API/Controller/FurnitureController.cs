@@ -15,7 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
 {
-    [Authorize]
+//    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -279,7 +279,7 @@ namespace Meblex.API.Controller
 
         }
 
-        [Authorize(Roles = "Worker")]
+//        [Authorize(Roles = "Worker")]
         [HttpPost("parts")]
         [SwaggerResponse(201, "" ,typeof(List<PartResponse>))]
         [SwaggerResponse(500)]
