@@ -104,16 +104,26 @@ namespace Meblex.API.Services
             var Id = Guard.Argument(id, nameof(id)).NotZero().NotNegative().Value;
             var pieceOfFurniture = _context.Furniture.Find(Id) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with that id does not exist");
 
-            var parts = pieceOfFurniture.Parts?.Select(x => new FurniturePartResponse()
-            {
-                Name = x.Name,
-                Count = x.Count,
-                PartId = x.PartId,
-                Price = x.Price,
-                Material = Mapper.Map(x.Material).ToANew<MaterialResponse>(),
-                Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
-                Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
-            }).ToList() ?? new List<FurniturePartResponse>();
+            var parts = pieceOfFurniture.Parts?.Select(x =>
+                            {
+                                var materialPart = x.Material;
+                                var patternPart = x.Pattern;
+                                var materialPartResponse = Mapper.Map(materialPart).ToANew<MaterialResponse>();
+                                var patterPartResponse = Mapper.Map(patternPart).ToANew<PatternsResponse>();
+                                materialPartResponse.Photo = materialPart.Photo.Path;
+                                patterPartResponse.Photo = patternPart.Photo.Path;
+                                return new FurniturePartResponse()
+                                {
+                                    Name = x.Name,
+                                    Count = x.Count,
+                                    PartId = x.PartId,
+                                    Price = x.Price,
+                                    Material = materialPartResponse,
+                                    Pattern = patterPartResponse,
+                                    Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
+                                };
+                            })
+                            .ToList() ?? new List<FurniturePartResponse>();
             var room = pieceOfFurniture.Room;
             var category = pieceOfFurniture.Category;
             var color = pieceOfFurniture.Color;
@@ -157,16 +167,26 @@ namespace Meblex.API.Services
             var response = new List<FurnitureResponse>();
             foreach (var pieceOfFurniture in furniture)
             {
-                var parts = pieceOfFurniture.Parts?.Select(x => new FurniturePartResponse()
-                    {
-                        Name = x.Name,
-                        Count = x.Count,
-                        PartId = x.PartId,
-                        Price = x.Price,
-                        Material = Mapper.Map(x.Material).ToANew<MaterialResponse>(),
-                        Pattern = Mapper.Map(x.Pattern).ToANew<PatternsResponse>(),
-                        Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
-                    })
+                
+                var parts = pieceOfFurniture.Parts?.Select(x =>
+                                {
+                                    var materialPart = x.Material;
+                                    var patternPart = x.Pattern;
+                                    var materialPartResponse = Mapper.Map(materialPart).ToANew<MaterialResponse>();
+                                    var patterPartResponse = Mapper.Map(patternPart).ToANew<PatternsResponse>();
+                                    materialPartResponse.Photo = materialPart.Photo.Path;
+                                    patterPartResponse.Photo = patternPart.Photo.Path;
+                                    return new FurniturePartResponse()
+                                    {
+                                        Name = x.Name,
+                                        Count = x.Count,
+                                        PartId = x.PartId,
+                                        Price = x.Price,
+                                        Material = materialPartResponse,
+                                        Pattern = patterPartResponse,
+                                        Color = Mapper.Map(x.Color).ToANew<ColorsResponse>()
+                                    };
+                                })
                     .ToList() ?? new List<FurniturePartResponse>();
                 var room = pieceOfFurniture.Room ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: "+pieceOfFurniture.PieceOfFurnitureId+" does not have room");
                 var category = pieceOfFurniture.Category ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: " + pieceOfFurniture.PieceOfFurnitureId + " does not have category");
