@@ -57,6 +57,8 @@ namespace Meblex.API
             services.AddTransient<IFurnitureService, FurnitureService>();
             services.AddTransient<IFitterService, FitterService>();
             services.AddTransient<IShoppingCartService, ShoppingCartService>();
+            services.AddTransient<ICustomSizeService, CustomSizeService>();
+
 
 
             services.Configure<CookiePolicyOptions>(options =>
