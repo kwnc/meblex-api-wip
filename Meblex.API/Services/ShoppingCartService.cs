@@ -90,24 +90,74 @@ namespace Meblex.API.Services
             }
         }
 
-        public OrderResponse GetClientById(int id)
+        public OrderResponse GetClientById(int id, int userId)
         {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero().Value;
+            var UserId = Guard.Argument(userId, nameof(userId)).NotNegative().NotZero().Value;
 
+            var order = _context.Orders.Single(x => x.Client.UserId == UserId && x.OrderId == Id) ?? throw  new HttpStatusCodeException(HttpStatusCode.NotFound);
+
+            var response = new OrderResponse()
+            {
+                State = order.State,
+                PostCode = order.PostCode,
+                City = order.City,
+                Address = order.Address,
+                Delivery = order.Delivery,
+                Reservation = order.Reservation,
+                OrderId = order.OrderId,
+                Street = order.Street,
+                TransactionId = order.TransactionId,
+                OrderLines = order.OrderLines.Select(x => new OrderLineResponse()
+                {
+                    Count = x.Count,
+                    OrderLineId = x.OrderLineId,
+                    Price = x.Price,
+                    Size = x.Size,
+                    PieceOfFurniture = x.PieceOfFurniture == null ? null : new ShoppingCartFurnitureResponse() { Name = x.PieceOfFurniture.Name, PieceOfFurnitureId = x.PieceOfFurniture.PieceOfFurnitureId, Photos = x.PieceOfFurniture.Photos.Select(z => z.Path).ToList()},
+                    Part = x.Part == null ? null: new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId}
+                }).ToList()
+            };
+
+            return response;
         }
 
         public List<OrderResponse> GetAllClientOrders(int userId)
         {
+            var UserId = Guard.Argument(userId, nameof(userId)).NotNegative().NotZero().Value;
 
+            var orders = _context.Orders.Where(x => x.Client.UserId == UserId);
+            var responses = new List<OrderResponse>();
+            foreach (var order in orders)
+            {
+                var response = new OrderResponse()
+                {
+                    State = order.State,
+                    PostCode = order.PostCode,
+                    City = order.City,
+                    Address = order.Address,
+                    Delivery = order.Delivery,
+                    Reservation = order.Reservation,
+                    OrderId = order.OrderId,
+                    Street = order.Street,
+                    TransactionId = order.TransactionId,
+                    OrderLines = order.OrderLines.Select(x => new OrderLineResponse()
+                    {
+                        Count = x.Count,
+                        OrderLineId = x.OrderLineId,
+                        Price = x.Price,
+                        Size = x.Size,
+                        PieceOfFurniture = x.PieceOfFurniture == null ? null : new ShoppingCartFurnitureResponse() { Name = x.PieceOfFurniture.Name, PieceOfFurnitureId = x.PieceOfFurniture.PieceOfFurnitureId, Photos = x.PieceOfFurniture.Photos.Select(z => z.Path).ToList() },
+                        Part = x.Part == null ? null : new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId }
+                    }).ToList()
+                };
+
+                responses.Add(response);
+            }
+
+            return responses;
         }
 
-        public List<OrderResponse> GetAllOrders()
-        {
 
-        }
-
-        public OrderResponse GetById(int id)
-        {
-
-        }
     }
 }
