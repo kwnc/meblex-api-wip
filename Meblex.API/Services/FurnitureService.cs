@@ -116,9 +116,13 @@ namespace Meblex.API.Services
             }).ToList() ?? new List<FurniturePartResponse>();
             var room = pieceOfFurniture.Room;
             var category = pieceOfFurniture.Category;
-            var pattern = pieceOfFurniture.Pattern;
             var color = pieceOfFurniture.Color;
             var material = pieceOfFurniture.Material;
+            var pattern = pieceOfFurniture.Pattern;
+            var materialResponse = Mapper.Map(material).ToANew<MaterialResponse>();
+            materialResponse.Photo = material.Photo.Path;
+            var patternResponse = Mapper.Map(pattern).ToANew<PatternsResponse>();
+            patternResponse.Photo = pattern.Photo.Path;
             return new FurnitureResponse()
             {
                 Id = pieceOfFurniture.PieceOfFurnitureId,
@@ -131,8 +135,8 @@ namespace Meblex.API.Services
                 Price = pieceOfFurniture.Price,
                 Count = pieceOfFurniture.Count,
                 Photos = pieceOfFurniture.Photos?.Select(x => x.Path).ToList() ?? new List<string>(),
-                Pattern = Mapper.Map(pattern).ToANew<PatternsResponse>(),
-                Material = Mapper.Map(material).ToANew<MaterialResponse>(),
+                Pattern =  patternResponse,
+                Material = materialResponse,
                 Color = Mapper.Map(color).ToANew<ColorsResponse>()
             };
         }
@@ -169,6 +173,10 @@ namespace Meblex.API.Services
                 var pattern = pieceOfFurniture.Pattern;
                 var color = pieceOfFurniture.Color;
                 var material = pieceOfFurniture.Material;
+                var materialResponse = Mapper.Map(material).ToANew<MaterialResponse>();
+                materialResponse.Photo = material.Photo.Path;
+                var patternResponse = Mapper.Map(pattern).ToANew<PatternsResponse>();
+                patternResponse.Photo = pattern.Photo.Path;
                 var final = new FurnitureResponse()
                 {
                     Id = pieceOfFurniture.PieceOfFurnitureId,
@@ -181,8 +189,8 @@ namespace Meblex.API.Services
                     Price = pieceOfFurniture.Price,
                     Count = pieceOfFurniture.Count,
                     Photos = pieceOfFurniture.Photos.Select(x => x.Path).ToList(),
-                    Pattern = Mapper.Map(pattern).ToANew<PatternsResponse>(),
-                    Material = Mapper.Map(material).ToANew<MaterialResponse>(),
+                    Pattern = patternResponse,
+                    Material = materialResponse,
                     Color = Mapper.Map(color).ToANew<ColorsResponse>()
                 };
                 response.Add(final);

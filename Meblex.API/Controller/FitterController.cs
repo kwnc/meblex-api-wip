@@ -21,23 +21,23 @@ namespace Meblex.API.Controller
         */
         public bool is_FITT(float[] roomSize, float[] furnitureSizes)
         {
-            foreach (furniture in furnitureSizes)
-                sort(furniture);
-            sort(furnitureSizes);
-            sort(roomSize);
-
-            float level = roomSize[0];
-            foreach (furniture in furnitureSizes)
-            {
-                if (furniture[0] > level)
-                {
-                    return false;
-                }
-                else
-                {
-                    level = roomSize[0] - furniture[0];
-                }
-            }
+//            foreach (var furniture in furnitureSizes)
+//                sort(furniture);
+//            sort(furnitureSizes);
+//            sort(roomSize);
+//
+//            float level = roomSize[0];
+//            foreach (var furniture in furnitureSizes)
+//            {
+//                if (furniture[0] > level)
+//                {
+//                    return false;
+//                }
+//                else
+//                {
+//                    level = roomSize[0] - furniture[0];
+//                }
+//            }
             return true;
         }
 

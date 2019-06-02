@@ -115,9 +115,11 @@ namespace Meblex.API.Services
 
         public List<CustomSizeFormResponse> GetAllCustomSizeForm()
         {
-            var forms = _context.CustomSizeForms?.Where(x => x.Approved == false) ??
-                        throw new HttpStatusCodeException(HttpStatusCode.NoContent, "There are not any forms");
-            if(!forms.Any()) throw new HttpStatusCodeException(HttpStatusCode.NoContent, "There are not any forms");
+            var forms = _context.CustomSizeForms?.Where(x => x.Approved == false);
+            if (forms == null || forms.ToList().Count == 0)
+            {
+                return new List<CustomSizeFormResponse>();
+            }
 
             var response = new List<CustomSizeFormResponse>();
             foreach (var form in forms)
