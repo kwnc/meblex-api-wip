@@ -9,7 +9,7 @@ namespace Meblex.API.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
 
-        public int TransactionId { get; set; }
+        public string TransactionId { get; set; }
 
         [Required]
         [StringLength(32)]
