@@ -54,14 +54,14 @@ namespace Meblex.API.Controller
         [Authorize(Roles = "Worker")]
         [HttpGet("all")]
         [SwaggerResponse(500)]
-        [SwaggerResponse(204)]
+        [SwaggerResponse(204, "", typeof(List<>))]
         [SwaggerResponse(404)]
         [SwaggerResponse(200, "", typeof(List<CustomSizeFormResponse>))]
         public IActionResult GetAllCustomSizeForms()
         {
             var response = _customSizeService.GetAllCustomSizeForm();
 
-            return StatusCode(200, response);
+            return response.Count == 0? StatusCode(204, new List<CustomSizeFormResponse>()): StatusCode(200, response);
         }
 
         [Authorize(Roles = "Worker")]

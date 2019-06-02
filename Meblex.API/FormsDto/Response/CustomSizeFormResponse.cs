@@ -7,6 +7,7 @@ namespace Meblex.API.FormsDto.Response
 {
     public class CustomSizeFormResponse
     {
+        public int CustomSizeFormId { get; set; }
         public string Size { get; set; }
 
         public bool Approved { get; set; }
