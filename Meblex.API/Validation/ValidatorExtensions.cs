@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -48,6 +50,30 @@ namespace Meblex.API.Validation
                 {
                     contextPropertyValidatorContext.AddFailure("'token' is not valid");
                 }
+            });
+        }
+
+        public static IRuleBuilderInitial<T, string> IsImage<T>(this IRuleBuilder<T, string> ruleBuilder)
+        {
+
+            return ruleBuilder.Custom((photo, contextPropertyValidatorContext) =>
+            {
+
+                var bytes = Convert.FromBase64String(photo.Split(',')[1]);
+
+                using (var stream = new MemoryStream(bytes))
+                {
+                    try
+                    {
+                        var image = Image.FromStream(stream);
+                        image.Dispose();
+                    }
+                    catch
+                    { 
+                        contextPropertyValidatorContext.AddFailure("Not valid photo");
+                    }
+                }
+
             });
         }
     }

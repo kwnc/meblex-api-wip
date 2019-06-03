@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using Meblex.API.Services;
+using Meblex.API.Validation;
 using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace Meblex.API.FormsDto.Request
@@ -50,6 +51,7 @@ namespace Meblex.API.FormsDto.Request
             RuleFor(x => x.Description).NotNull().NotEmpty();
             RuleFor(x => x.Price).NotEmpty().NotNull().GreaterThan(-1);
             RuleFor(x => x.Size).NotEmpty().NotNull().Matches(@"(\d+)x(\d+)x(\d+)");
+            RuleForEach(x => x.Photos).NotNull().NotEmpty().IsImage();
 
 
         }

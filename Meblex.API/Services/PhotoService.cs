@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Amazon;
 using Amazon.Runtime;
-using Amazon.Runtime.Internal;
 using Amazon.S3;
-using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Meblex.API.Interfaces;
-using Microsoft.AspNetCore.Http;
 
 namespace Meblex.API.Services
 {
@@ -53,22 +45,23 @@ namespace Meblex.API.Services
         public async Task<string> SafePhoto(string photo)
         {
             var bytes = Convert.FromBase64String(photo.Split(',')[1]);
-            var stream = new MemoryStream(bytes);
-            var photoName = GetHashedName(bytes) + "." +Regex.Match(photo, @"data:.*?/(?<ext>.*?);base64").Groups["ext"].Value;
-
-            using (var fileTransferUtility = new TransferUtility(_client))
+            var photoName = GetHashedName(bytes) + "." + Regex.Match(photo, @"data:.*?/(?<ext>.*?);base64").Groups["ext"].Value;
+            using (var stream = new MemoryStream(bytes))
             {
-                var awsRequest = new TransferUtilityUploadRequest()
+                using (var fileTransferUtility = new TransferUtility(_client))
                 {
-                    BucketName = BucketName,
-                    Key = photoName,
-                    InputStream = stream
-                };
-                awsRequest.CannedACL = "public-read";
-                await fileTransferUtility.UploadAsync(awsRequest);
+                    var awsRequest = new TransferUtilityUploadRequest()
+                    {
+                        BucketName = BucketName,
+                        Key = photoName,
+                        InputStream = stream
+                    };
+                    awsRequest.CannedACL = "public-read";
+                    await fileTransferUtility.UploadAsync(awsRequest);
 
+                }
             }
-            stream.Close();
+
             return photoName;
         }
 
