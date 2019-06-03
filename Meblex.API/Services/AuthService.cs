@@ -13,6 +13,7 @@ using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Meblex.API.Services
@@ -21,11 +22,13 @@ namespace Meblex.API.Services
     {
         private readonly MeblexDbContext _context;
         private readonly JWTSettings _jwtSettings;
+        private readonly IStringLocalizer<AuthService> _localizer;
 
-        public AuthService(MeblexDbContext context, JWTSettings jwtSettings)
+        public AuthService(MeblexDbContext context, JWTSettings jwtSettings, IStringLocalizer<AuthService> localizer)
         {
             _context = context;
             _jwtSettings = jwtSettings;
+            _localizer = localizer;
         }
 
         public async Task<string> GetAccessToken(string login, string password)
@@ -34,7 +37,7 @@ namespace Meblex.API.Services
             var Password = Guard.Argument(password, nameof(password)).NotEmpty().NotNull().NotWhiteSpace();
             var hashedPassword = PasswordHasher(Password);
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == Login && x.Password == hashedPassword);
-            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono u¿ytkownika"]);
 
             return GenerateToken(dbUser, _jwtSettings.AccessTokenSecret, _jwtSettings.AccessTokenExpiredHours);
         }
@@ -44,7 +47,7 @@ namespace Meblex.API.Services
             var Id = Guard.Argument(id, nameof(id)).NotNegative();
 
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == Id);
-            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono u¿ytkownika"]);
 
             return GenerateToken(dbUser, _jwtSettings.AccessTokenSecret, _jwtSettings.AccessTokenExpiredHours);
         }
@@ -56,7 +59,7 @@ namespace Meblex.API.Services
 
             var hashedPassword = PasswordHasher(Password);
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == Login && x.Password == hashedPassword);
-            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono u¿ytkownika"]);
 
             return GenerateToken(dbUser, _jwtSettings.RefreshTokenSecret, _jwtSettings.RefreshTokenExpiredHours);
 
@@ -66,7 +69,7 @@ namespace Meblex.API.Services
         {
             var Id = Guard.Argument(id, nameof(id)).NotNegative();
             var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == Id);
-            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
+            if (dbUser == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono u¿ytkownika"]);
 
             return GenerateToken(dbUser, _jwtSettings.RefreshTokenSecret, _jwtSettings.RefreshTokenExpiredHours);
 
@@ -129,7 +132,7 @@ namespace Meblex.API.Services
                 return new UserConfirmedRegistation() { Login = user.Email };
             }
 
-            throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to register user");
+            throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Nie mo¿na by³o zarejestrowaæ u¿ytkownika"]);
 
         }
 

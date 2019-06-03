@@ -9,6 +9,7 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
+using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
@@ -16,10 +17,12 @@ namespace Meblex.API.Services
     {
 
         public readonly MeblexDbContext _context;
+        private readonly IStringLocalizer<ShoppingCartService> _localizer;
 
-        public ShoppingCartService(MeblexDbContext context)
+        public ShoppingCartService(MeblexDbContext context, IStringLocalizer<ShoppingCartService> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
         //Dodać migracje do id tranzakcji
 
@@ -41,11 +44,11 @@ namespace Meblex.API.Services
                 TransactionId = Guid.NewGuid().ToString(),
                 OrderLines = Order.OrderLines.Select(x => new OrderLine()
                 {
-                    PieceOfFurniture = x.PieceOfFurnitureId == null? null : _context.Furniture.Find(x.PieceOfFurnitureId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Piece of furniture does not exist"),
-                    Part = x.PartId == null ? null : _context.Parts.Find(x.PartId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Part does not exist"),
-                    Count = OnStock(x) ? x.Count : throw new HttpStatusCodeException(HttpStatusCode.Conflict, "Not sufficient stock of: " 
+                    PieceOfFurniture = x.PieceOfFurnitureId == null? null : _context.Furniture.Find(x.PieceOfFurnitureId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Część mebla nie istnieje"]),
+                    Part = x.PartId == null ? null : _context.Parts.Find(x.PartId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Część mebla nie istnieje"]),
+                    Count = OnStock(x) ? x.Count : throw new HttpStatusCodeException(HttpStatusCode.Conflict, _localizer["Nie wystarczająca ilość "]
                                                                                                               + (x.PartId == null ? _context.Furniture.Find(x.PieceOfFurnitureId).Name :  _context.Parts.Find(x.PartId).Name)
-                                                                                                              + "Available: "
+                                                                                                              + _localizer[" dostępnych"]
                                                                                                               + (x.PartId == null ? _context.Furniture.Find(x.PieceOfFurnitureId).Count : _context.Parts.Find(x.PartId).Count)),
                     Price = x.Price,
                     Size = x.Size
@@ -54,7 +57,7 @@ namespace Meblex.API.Services
             _context.Orders.Add(toAdd);
 
             if (_context.SaveChanges() == 0)
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Nie można było dodać danych"]);
             FixStock(order.OrderLines);
             return toAdd.OrderId;
         }
@@ -95,7 +98,7 @@ namespace Meblex.API.Services
             var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero().Value;
             var UserId = Guard.Argument(userId, nameof(userId)).NotNegative().NotZero().Value;
 
-            var order = _context.Orders.Single(x => x.Client.UserId == UserId && x.OrderId == Id) ?? throw  new HttpStatusCodeException(HttpStatusCode.NotFound);
+            var order = _context.Orders.Single(x => x.Client.UserId == UserId && x.OrderId == Id) ?? throw  new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Jakiś błąd :)"]);
 
             var response = new OrderResponse()
             {

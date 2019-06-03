@@ -3,6 +3,7 @@ using System.Net;
 using Meblex.API.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
@@ -13,6 +14,8 @@ namespace Meblex.API.Controller
     [ApiController]
     public class TestController :ControllerBase
     {
+        private readonly IStringLocalizer<TestController> _localizer;
+
         [HttpGet]
         [SwaggerOperation(
             Summary = "Test endpoint",
