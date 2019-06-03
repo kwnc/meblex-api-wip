@@ -10,6 +10,7 @@ using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -27,12 +28,14 @@ namespace Meblex.API.Controller
         private readonly IJWTService _jwtService;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
-        public AuthController(IAuthService authService, IJWTService jwtService, IMapper mapper, IUserService userService)
+        private readonly IStringLocalizer<AuthController> _localizer;
+        public AuthController(IAuthService authService, IJWTService jwtService, IMapper mapper, IUserService userService, IStringLocalizer<AuthController> localizer)
         {
             _authService = authService;
             _jwtService = jwtService;
             _mapper = mapper;
             _userService = userService;
+            _localizer = localizer;
         }
 
         [AllowAnonymous]
@@ -48,7 +51,7 @@ namespace Meblex.API.Controller
         public async Task<IActionResult> Login([FromBody] UserLoginForm user)
         {
             var loginCheck = await _authService.CheckUser(user.Email, user.Password);
-            if (!loginCheck) throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, "Wrong password and/or email");
+            if (!loginCheck) throw new HttpStatusCodeException(HttpStatusCode.Unauthorized, _localizer["Wrong password and/or email"]);
 
             var accessToken = await _authService.GetAccessToken(user.Email, user.Password);
             var refreshToken = await _authService.GetRefreshToken(user.Email, user.Password);
@@ -78,7 +81,7 @@ namespace Meblex.API.Controller
         public async Task<IActionResult> Register([FromBody] AuthRegisterForm registerForm)
         {
             var checkEmail = await _userService.CheckIfUserWithEmailExist(registerForm.Email);
-            if (checkEmail) throw new HttpStatusCodeException(HttpStatusCode.Conflict, "User with that email exist");
+            if (checkEmail) throw new HttpStatusCodeException(HttpStatusCode.Conflict, _localizer["User with that email exist"]);
             var registedUserInfo = await _authService.RegisterNewUser(registerForm);
             if (registedUserInfo == null) return StatusCode(500);
             var accessToken = await  _authService.GetAccessToken(registerForm.Email, registerForm.Password);
