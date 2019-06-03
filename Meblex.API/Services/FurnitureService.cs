@@ -15,15 +15,18 @@ using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
     public class FurnitureService:IFurnitureService
     {
         private readonly MeblexDbContext _context;
-        public FurnitureService(MeblexDbContext context)
+        private readonly IStringLocalizer<FurnitureService> _localizer;
+        public FurnitureService(MeblexDbContext context, IStringLocalizer<FurnitureService> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
         public async Task<int> AddFurniture(List<string> photos, PieceOfFurnitureAddDto pieceOfFurniture)
         {
@@ -32,13 +35,13 @@ namespace Meblex.API.Services
 
             if (cat == null || room == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Room or Category does not exist");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Pokój lub kategoria nie istnieje"]);
             }
 
             var duplicate = _context.Furniture.Any(x => x.Name == pieceOfFurniture.Name);
             if (duplicate)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Piece of furniture already exist");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Część mebla już istnieje"]);
             }
 
             var pieceOfFurnitureInserted = _context.Furniture.Add(new PieceOfFurniture()
@@ -81,7 +84,7 @@ namespace Meblex.API.Services
             _context.MaterialPhotos.Add(new MaterialPhoto() {MaterialId = id, Path = photoName});
             if (_context.SaveChanges() == 0)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Nie można było dodać danych"]);
             }
 
             return id;
@@ -93,7 +96,7 @@ namespace Meblex.API.Services
             _context.PatternPhotos.Add(new PatternPhoto() { PatternId = id, Path = photoName });
             if (_context.SaveChanges() == 0)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Nie można było dodać danych"]);
             }
 
             return id;
@@ -102,7 +105,7 @@ namespace Meblex.API.Services
         public FurnitureResponse GetPieceOfFurniture(int id)
         {
             var Id = Guard.Argument(id, nameof(id)).NotZero().NotNegative().Value;
-            var pieceOfFurniture = _context.Furniture.Find(Id) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with that id does not exist");
+            var pieceOfFurniture = _context.Furniture.Find(Id) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Istnieje mebel z tym id"]);
 
             var parts = pieceOfFurniture.Parts?.Select(x =>
                             {
@@ -188,8 +191,8 @@ namespace Meblex.API.Services
                                     };
                                 })
                     .ToList() ?? new List<FurniturePartResponse>();
-                var room = pieceOfFurniture.Room ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: "+pieceOfFurniture.PieceOfFurnitureId+" does not have room");
-                var category = pieceOfFurniture.Category ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Furniture with index: " + pieceOfFurniture.PieceOfFurnitureId + " does not have category");
+                var room = pieceOfFurniture.Room ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Mebel z indeksem "] + pieceOfFurniture.PieceOfFurnitureId + _localizer[" nie posiada pokoju"]);
+                var category = pieceOfFurniture.Category ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Mebel z indeksem "] + pieceOfFurniture.PieceOfFurnitureId + _localizer[" nie posiada kategorii"]);
                 var pattern = pieceOfFurniture.Pattern;
                 var color = pieceOfFurniture.Color;
                 var material = pieceOfFurniture.Material;
@@ -222,7 +225,7 @@ namespace Meblex.API.Services
         public TResponse GetSingle<TEntity, TResponse>(int id) where TEntity : class where TResponse : class
         {
             var db = _context.Find<TEntity>(id);
-            if(db == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound);
+            if(db == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Jakiś błąd :)"]);
             return Mapper.Map(db).ToANew<TResponse>();
         }
 
@@ -248,7 +251,7 @@ namespace Meblex.API.Services
                         var duplicate = Equals(p1, p2);
                         if (duplicate)
                         {
-                            throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Already exist");
+                            throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Istnieje już"]);
                         }
                     }
                 }
@@ -256,7 +259,7 @@ namespace Meblex.API.Services
             }
             dbSet.Add(toDb);
             
-            if (_context.SaveChanges() == 0) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data to db");
+            if (_context.SaveChanges() == 0) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Nie można było dodać danych do bazy"]);
 
             return (int) toDb.GetType().GetProperty(typeof(TEntity).Name + "Id").GetValue(toDb);
         }
@@ -267,17 +270,17 @@ namespace Meblex.API.Services
             var duplicate = _context.Parts.Any(x => x.Name == part.Name && x.PieceOfFurnitureId == part.PieceOfFurnitureId);
             if (duplicate)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Already exist");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Istnieje już"]);
             }
 
-            toAdd.Color = _context.Colors.Find(part.ColorId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Color not found"); 
-            toAdd.Pattern = _context.Patterns.Find(part.PatternId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Pattern not found"); 
-            toAdd.Material = _context.Materials.Find(part.MaterialId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Material not found"); 
-            toAdd.PieceOfFurniture = _context.Furniture.Find(part.PieceOfFurnitureId) ??  throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Piece of furniture not found"); ;
+            toAdd.Color = _context.Colors.Find(part.ColorId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono koloru"]); 
+            toAdd.Pattern = _context.Patterns.Find(part.PatternId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono wzoru"]); 
+            toAdd.Material = _context.Materials.Find(part.MaterialId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono materiału"]); 
+            toAdd.PieceOfFurniture = _context.Furniture.Find(part.PieceOfFurnitureId) ??  throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono częsci mebla"]); ;
             _context.Parts.Add(toAdd);
             if (_context.SaveChanges() == 0)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Nie można było dodać danych"]);
             }
 
             return toAdd.PartId;
@@ -291,7 +294,7 @@ namespace Meblex.API.Services
 
             if (photo == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No photo found");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono zdjęcia"]);
             }
 
             return photo;
@@ -312,7 +315,7 @@ namespace Meblex.API.Services
 
             if (photo == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "No photo found");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Nie znaleziono zdjęcia"]);
             }
 
             return photo;
@@ -328,9 +331,9 @@ namespace Meblex.API.Services
         public void RemoveById<TEntity>(int id) where TEntity : class
         {
             var toRemove = _context.Find<TEntity>(id);
-            if (toRemove == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound);
+            if (toRemove == null) throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Jakiś błąd :)"]);
             _context.Set<TEntity>().Remove(toRemove);
-            if(_context.SaveChanges() == 0) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to remove data");
+            if(_context.SaveChanges() == 0) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Nie można było usunąć danych"]);
         }
     }
 }
