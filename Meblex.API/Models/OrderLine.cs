@@ -23,41 +23,13 @@ namespace Meblex.API.Models
         public virtual PieceOfFurniture PieceOfFurniture { get; set; }
 
 
-        public int? PieceOfFurnitureId
-        {
-            get => PieceOfFurnitureId;
-            set
-            {
-                if (PartId != null )
-                {
-                    throw new Exception("Relation with Part exist");
-                }
-                else
-                {
-                    PieceOfFurnitureId = value;
-                }
-            }
-        }
+        public int? PieceOfFurnitureId { get; set; }
 
 
         public virtual Part Part { get; set; }
 
 
-        public int? PartId
-        {
-            get => PartId;
-            set
-            {
-                if (PieceOfFurnitureId != null)
-                {
-                    throw new Exception("Relation with Part exist");
-                }
-                else
-                {
-                    PartId = value;
-                }
-            }
-        }
+        public int? PartId { get; set; }
 
         [Required]
         public virtual Order Order { get; set; }

@@ -42,16 +42,18 @@ namespace Meblex.API.Services
                 TransactionId = Guid.NewGuid().ToString(),
                 OrderLines = Order.OrderLines.Select(x => new OrderLine()
                 {
-                    PieceOfFurniture = x.PieceOfFurnitureId == null? null : _context.Furniture.Find(x.PieceOfFurnitureId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Furniture's part doesn't exist"]),
+                    PieceOfFurniture = x.PieceOfFurnitureId == null ? null : _context.Furniture.Find(x.PieceOfFurnitureId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Furniture's part doesn't exist"]),
                     Part = x.PartId == null ? null : _context.Parts.Find(x.PartId) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Furniture's part doesn't exist"]),
                     Count = OnStock(x) ? x.Count : throw new HttpStatusCodeException(HttpStatusCode.Conflict, _localizer["Not enough amount of available "]
-                                                                                                              + (x.PartId == null ? _context.Furniture.Find(x.PieceOfFurnitureId).Name :  _context.Parts.Find(x.PartId).Name)
+                                                                                                              + (x.PartId == null ? _context.Furniture.Find(x.PieceOfFurnitureId).Name : _context.Parts.Find(x.PartId).Name)
                                                                                                               + " : "
                                                                                                               + (x.PartId == null ? _context.Furniture.Find(x.PieceOfFurnitureId).Count : _context.Parts.Find(x.PartId).Count)),
                     Price = x.Price,
                     Size = x.Size
                 }).ToList()
             };
+            if (toAdd.OrderLines.Any(x => x.PartId != null && x.PieceOfFurnitureId != null))
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Double relation"]);
             _context.Orders.Add(toAdd);
 
             if (_context.SaveChanges() == 0)
