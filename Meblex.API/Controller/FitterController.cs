@@ -1,6 +1,5 @@
 ﻿using Meblex.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Controller
 {
@@ -10,11 +9,9 @@ namespace Meblex.API.Controller
     public class FitterController : ControllerBase
     {
         public readonly IFitterService _fitterService;
-        private readonly IStringLocalizer<FitterController> _localizer;
-        public FitterController(IFitterService fitterService, IStringLocalizer<FitterController> localizer)
+        public FitterController(IFitterService fitterService)
         {
             _fitterService = fitterService;
-            _localizer = localizer;
         }
     }
 }
