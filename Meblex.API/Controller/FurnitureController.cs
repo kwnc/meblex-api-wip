@@ -11,6 +11,7 @@ using Meblex.API.Models;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
@@ -23,10 +24,12 @@ namespace Meblex.API.Controller
     {
         private readonly IPhotoService _photoService;
         private readonly IFurnitureService _furnitureService;
-        public FurnitureController(IPhotoService photoService, IFurnitureService furnitureService)
+        private readonly IStringLocalizer<FurnitureController> _localizer;
+        public FurnitureController(IPhotoService photoService, IFurnitureService furnitureService, IStringLocalizer<FurnitureController> localizer)
         {
             _photoService = photoService;
             _furnitureService = furnitureService;
+            _localizer = localizer;
         }
 
         [Authorize(Roles = "Worker")]

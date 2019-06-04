@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Dawn;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Meblex.API.Services
@@ -10,9 +11,11 @@ namespace Meblex.API.Services
     public class JWTService:IJWTService
     {
         private readonly JWTSettings _jwtSettings;
-        public JWTService(JWTSettings jwtSettings)
+        private readonly IStringLocalizer<JWTService> _localizer;
+        public JWTService(JWTSettings jwtSettings, IStringLocalizer<JWTService> localizer)
         {
             _jwtSettings = jwtSettings;
+            _localizer = localizer;
         }
 
         public string GetClaimValue(string claim, TokenValidationParameters tokenValidationParameters, string token)
