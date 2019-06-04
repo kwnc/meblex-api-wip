@@ -8,6 +8,7 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
@@ -20,11 +21,13 @@ namespace Meblex.API.Controller
     {
         public readonly IJWTService _jwtService;
         public readonly ICustomSizeService _customSizeService;
+        private readonly IStringLocalizer<CustomSizeController> _localizer;
 
-        public CustomSizeController(IJWTService jwtService, ICustomSizeService customSizeService)
+        public CustomSizeController(IJWTService jwtService, ICustomSizeService customSizeService, IStringLocalizer<CustomSizeController> localizer)
         {
             _jwtService = jwtService;
             _customSizeService = customSizeService;
+            _localizer = localizer;
         }
 
         [HttpPost("client/add")]

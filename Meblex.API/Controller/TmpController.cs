@@ -35,10 +35,6 @@ namespace Meblex.API.Controller
                 return StatusCode(404, "Piece of furniture does not exist");
             }
 
-            if (pieceOfFurniture.Photos != null)
-            {
-                return StatusCode(500, "Already have photos");
-            }
             var photosNames = await _photoService.SafePhotos(form.Photos);
             
             photosNames.ForEach(x => _context.Photos.Add(new Photo(){PieceOfFurniture = pieceOfFurniture, PieceOfFurnitureId = form.PieceOfFurnitureId, Path = x}));

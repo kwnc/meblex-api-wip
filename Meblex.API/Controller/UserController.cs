@@ -6,6 +6,7 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 using Mapper = AgileObjects.AgileMapper.Mapper;
 
@@ -20,12 +21,14 @@ namespace Meblex.API.Controller
         private readonly IUserService _userService;
         private readonly IClientService _clientService;
         private readonly IMapper _mapper;
-        public UserController(IJWTService jwtService, IUserService userService, IClientService clientService, IMapper mapper)
+        private readonly IStringLocalizer<UserController> _localizer;
+        public UserController(IJWTService jwtService, IUserService userService, IClientService clientService, IMapper mapper, IStringLocalizer<UserController> localizer)
         {
             _jwtService = jwtService;
             _userService = userService;
             _clientService = clientService;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
         [HttpPut("update")]
