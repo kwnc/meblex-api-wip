@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Meblex.API.Models
@@ -35,6 +36,6 @@ namespace Meblex.API.Models
         public virtual Material Material { get; set; }
         [Required]
         public int MaterialId { get; set; }
-        public virtual OrderLine OrderLine { get; set; }
+        public virtual List<OrderLine> OrderLine { get; set; }
     }
 }

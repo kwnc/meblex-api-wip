@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Meblex.API.Migrations
 {
     [DbContext(typeof(MeblexDbContext))]
-    [Migration("20190604163808_RemovedAddressInOrder")]
-    partial class RemovedAddressInOrder
+    [Migration("20190604200045_Final")]
+    partial class Final
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -212,8 +212,7 @@ namespace Meblex.API.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("PartId")
-                        .IsUnique();
+                    b.HasIndex("PartId");
 
                     b.HasIndex("PieceOfFurnitureId");
 
@@ -434,8 +433,8 @@ namespace Meblex.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Part", "Part")
-                        .WithOne("OrderLine")
-                        .HasForeignKey("Meblex.API.Models.OrderLine", "PartId");
+                        .WithMany("OrderLine")
+                        .HasForeignKey("PartId");
 
                     b.HasOne("Meblex.API.Models.PieceOfFurniture", "PieceOfFurniture")
                         .WithMany("OrderLines")
