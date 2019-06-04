@@ -39,7 +39,6 @@ namespace Meblex.API.Services
                 PostCode = int.Parse(Order.PostCode),
                 Reservation = Order.Reservation,
                 State = Order.State,
-                Street = Order.Street,
                 TransactionId = Guid.NewGuid().ToString(),
                 OrderLines = Order.OrderLines.Select(x => new OrderLine()
                 {
@@ -108,7 +107,6 @@ namespace Meblex.API.Services
                 Delivery = order.Delivery,
                 Reservation = order.Reservation,
                 OrderId = order.OrderId,
-                Street = order.Street,
                 TransactionId = order.TransactionId,
                 OrderLines = order.OrderLines.Select(x => new OrderLineResponse()
                 {
@@ -141,7 +139,6 @@ namespace Meblex.API.Services
                     Delivery = order.Delivery,
                     Reservation = order.Reservation,
                     OrderId = order.OrderId,
-                    Street = order.Street,
                     TransactionId = order.TransactionId,
                     OrderLines = order.OrderLines.Select(x => new OrderLineResponse()
                     {

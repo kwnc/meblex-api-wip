@@ -20,10 +20,6 @@ namespace Meblex.API.Models
 
         [Required]
         [StringLength(32)]
-        public string Street { get; set; }
-
-        [Required]
-        [StringLength(32)]
         public string Address { get; set; }
 
         [Required]

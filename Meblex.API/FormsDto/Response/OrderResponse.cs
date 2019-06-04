@@ -15,8 +15,6 @@ namespace Meblex.API.FormsDto.Response
 
         public bool Reservation { get; set; }
 
-        public string Street { get; set; }
-
         public string Address { get; set; }
 
         public string State { get; set; }
