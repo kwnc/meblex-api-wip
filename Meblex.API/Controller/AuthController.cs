@@ -8,8 +8,10 @@ using Meblex.API.DTO;
 using Meblex.API.FormsDto.Response;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
+using Meblex.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -22,13 +24,14 @@ namespace Meblex.API.Controller
     [ApiController]
     public class AuthController: ControllerBase
     {
-
+        private readonly IStringLocalizer<AuthController> _localizer;
         private readonly IAuthService _authService;
         private readonly IJWTService _jwtService;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
-        public AuthController(IAuthService authService, IJWTService jwtService, IMapper mapper, IUserService userService)
+        public AuthController(IAuthService authService, IJWTService jwtService, IMapper mapper, IUserService userService, IStringLocalizer<AuthController> localizer)
         {
+            _localizer = localizer;
             _authService = authService;
             _jwtService = jwtService;
             _mapper = mapper;

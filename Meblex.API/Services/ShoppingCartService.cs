@@ -9,16 +9,18 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
+using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
     public class ShoppingCartService:IShoppingCartService
     {
-
+        private readonly IStringLocalizer<ShoppingCartService> _localizer;
         public readonly MeblexDbContext _context;
 
-        public ShoppingCartService(MeblexDbContext context)
+        public ShoppingCartService(MeblexDbContext context, IStringLocalizer<ShoppingCartService> localizer)
         {
+            _localizer = localizer;
             _context = context;
         }
         //Dodać migracje do id tranzakcji
@@ -115,7 +117,7 @@ namespace Meblex.API.Services
                     Price = x.Price,
                     Size = x.Size,
                     PieceOfFurniture = x.PieceOfFurniture == null ? null : new ShoppingCartFurnitureResponse() { Name = x.PieceOfFurniture.Name, PieceOfFurnitureId = x.PieceOfFurniture.PieceOfFurnitureId, Photos = x.PieceOfFurniture.Photos.Select(z => z.Path).ToList()},
-                    Part = x.Part == null ? null: new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId}
+                    Part = x.Part == null ? null: new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId, PieceOfFurnitureId = x.Part.PieceOfFurnitureId}
                 }).ToList()
             };
 
@@ -148,7 +150,7 @@ namespace Meblex.API.Services
                         Price = x.Price,
                         Size = x.Size,
                         PieceOfFurniture = x.PieceOfFurniture == null ? null : new ShoppingCartFurnitureResponse() { Name = x.PieceOfFurniture.Name, PieceOfFurnitureId = x.PieceOfFurniture.PieceOfFurnitureId, Photos = x.PieceOfFurniture.Photos.Select(z => z.Path).ToList() },
-                        Part = x.Part == null ? null : new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId }
+                        Part = x.Part == null ? null : new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId, PieceOfFurnitureId = x.Part.PieceOfFurnitureId }
                     }).ToList()
                 };
 

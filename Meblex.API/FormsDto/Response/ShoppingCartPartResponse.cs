@@ -7,6 +7,7 @@ namespace Meblex.API.FormsDto.Response
 {
     public class ShoppingCartPartResponse
     {
+        public int PieceOfFurnitureId { get; set; }
         public int PartId { get; set; }
         public string Name { get; set; }
     }

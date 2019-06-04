@@ -15,15 +15,18 @@ using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
     public class FurnitureService:IFurnitureService
     {
+        private readonly IStringLocalizer<FurnitureService> _localizer;
         private readonly MeblexDbContext _context;
-        public FurnitureService(MeblexDbContext context)
+        public FurnitureService(MeblexDbContext context, IStringLocalizer<FurnitureService> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
         public async Task<int> AddFurniture(List<string> photos, PieceOfFurnitureAddDto pieceOfFurniture)
         {

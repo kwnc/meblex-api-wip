@@ -11,6 +11,7 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
+using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
@@ -18,9 +19,11 @@ namespace Meblex.API.Services
     {
         private readonly MeblexDbContext _context;
         private readonly IFurnitureService _furnitureService;
+        private readonly IStringLocalizer<CustomSizeService> _localizer;
 
-        public CustomSizeService(MeblexDbContext context, IFurnitureService furnitureService)
+        public CustomSizeService(MeblexDbContext context, IFurnitureService furnitureService, IStringLocalizer<CustomSizeService> localizer)
         {
+            _localizer = localizer;
             _context = context;
             _furnitureService = furnitureService;
         }
