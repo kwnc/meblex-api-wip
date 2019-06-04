@@ -11,11 +11,9 @@ namespace Meblex.API.Services
     public class JWTService:IJWTService
     {
         private readonly JWTSettings _jwtSettings;
-        private readonly IStringLocalizer<JWTService> _localizer;
-        public JWTService(JWTSettings jwtSettings, IStringLocalizer<JWTService> localizer)
+        public JWTService(JWTSettings jwtSettings)
         {
             _jwtSettings = jwtSettings;
-            _localizer = localizer;
         }
 
         public string GetClaimValue(string claim, TokenValidationParameters tokenValidationParameters, string token)
