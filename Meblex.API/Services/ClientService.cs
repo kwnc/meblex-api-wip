@@ -10,7 +10,6 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 using Mapper = AgileObjects.AgileMapper.Mapper;
 
 namespace Meblex.API.Services
@@ -19,12 +18,10 @@ namespace Meblex.API.Services
     {
         private readonly IMapper _mapper;
         private readonly MeblexDbContext _context;
-        private readonly IStringLocalizer<ClientService> _localizer;
-        public ClientService(IMapper mapper, MeblexDbContext context, IStringLocalizer<ClientService> localizer)
+        public ClientService(IMapper mapper, MeblexDbContext context)
         {
             _context = context;
             _mapper = mapper;
-            _localizer = localizer;
         }
 
         public async Task<bool> UpdateClientData(ClientUpdateDto client, int clientId)

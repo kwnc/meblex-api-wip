@@ -4,7 +4,6 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
@@ -16,12 +15,10 @@ namespace Meblex.API.Controller
     {
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IJWTService _jwtService;
-        private readonly IStringLocalizer<ShoppingCartController> _localizer;
-        public ShoppingCartController(IShoppingCartService shoppingCartService, IJWTService jwtService, IStringLocalizer<ShoppingCartController> localizer)
+        public ShoppingCartController(IShoppingCartService shoppingCartService, IJWTService jwtService)
         {
             _shoppingCartService = shoppingCartService;
             _jwtService = jwtService;
-            _localizer = localizer;
         }
 
         [Authorize(Roles = "Client")]

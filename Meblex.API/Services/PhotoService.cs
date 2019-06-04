@@ -8,21 +8,17 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Transfer;
 using Meblex.API.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Localization;
-
 
 namespace Meblex.API.Services
 {
     public class PhotoService:IPhotoService
     {
         private readonly string Images = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-        private readonly IStringLocalizer<PhotoService> _localizer;
         private IAmazonS3 _client;
         private AWSCredentials _credentials;
         private AmazonS3Config _config;
         private string BucketName = Environment.GetEnvironmentVariable("SPACES_NAME");
-        public PhotoService(IStringLocalizer<PhotoService> localizer)
+        public PhotoService()
         {
             _config = new AmazonS3Config();
             _config.ServiceURL = Environment.GetEnvironmentVariable("SPACES_REGION");
@@ -30,7 +26,7 @@ namespace Meblex.API.Services
                 new BasicAWSCredentials(Environment.GetEnvironmentVariable("SPACES_ACCESS_KEY"),
                     Environment.GetEnvironmentVariable("SPACES_SECRET_KEY"));
             _client = new AmazonS3Client(_credentials,_config);
-            _localizer = localizer;
+
         }
 
         public async Task<List<string>> SafePhotos(List<string> photos)

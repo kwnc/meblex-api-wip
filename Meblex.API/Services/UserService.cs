@@ -9,7 +9,6 @@ using Meblex.API.Context;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
@@ -18,13 +17,12 @@ namespace Meblex.API.Services
         private readonly MeblexDbContext _context;
         private readonly IMapper _mapper;
         private readonly IAuthService _authService;
-        private readonly IStringLocalizer<UserService> _localizer;
-        public UserService(MeblexDbContext context, IMapper mapper, IAuthService authService, IStringLocalizer<UserService> localizer)
+        public UserService(MeblexDbContext context, IMapper mapper, IAuthService authService)
         {
             _context = context;
             _mapper = mapper;
             _authService = authService;
-            _localizer = localizer;
+
         }
         public async Task<Client> GetUserData(string login)
         {
