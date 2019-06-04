@@ -4,19 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Meblex.API.Context;
 using Meblex.API.Interfaces;
-using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
     public class FitterService:IFitterService
     {
         private readonly MeblexDbContext _context;
-        private readonly IStringLocalizer<FitterService> _localizer;
 
-        public FitterService(MeblexDbContext context, IStringLocalizer<FitterService> localizer)
+        public FitterService(MeblexDbContext context)
         {
             _context = context;
-            _localizer = localizer;
         }
 
         /*
