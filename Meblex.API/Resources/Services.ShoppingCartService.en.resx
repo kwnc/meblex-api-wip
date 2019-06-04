@@ -120,6 +120,9 @@
   <data name="Could not add data" xml:space="preserve">
     <value>Could not add data</value>
   </data>
+  <data name="Double relation" xml:space="preserve">
+    <value>Double relation</value>
+  </data>
   <data name="Furniture's part doesn't exist" xml:space="preserve">
     <value>Furniture part doesn't exist</value>
   </data>
