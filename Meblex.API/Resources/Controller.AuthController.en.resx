@@ -120,7 +120,7 @@
   <data name="User with that email exist" xml:space="preserve">
     <value>User with that email exist</value>
   </data>
-  <data name="Wrong password and/or email" xml:space="preserve">
+  <data name="Wrong password or email" xml:space="preserve">
     <value>Wrong password and/or email</value>
   </data>
 </root>

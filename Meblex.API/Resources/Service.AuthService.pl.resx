@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="User with that email exist" xml:space="preserve">
-    <value>Użytkownik z takim emailem istnieje</value>
+  <data name="User couldn't be registered" xml:space="preserve">
+    <value>Nie udało się zarejestrować użytkownika</value>
   </data>
-  <data name="Wrong password or email" xml:space="preserve">
-    <value>Złe hasło lub/i email</value>
+  <data name="User not found" xml:space="preserve">
+    <value>Nie znaleziono użytkownika</value>
   </data>
 </root>

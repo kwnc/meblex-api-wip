@@ -117,10 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="User with that email exist" xml:space="preserve">
-    <value>Użytkownik z takim emailem istnieje</value>
+  <data name="Already exists" xml:space="preserve">
+    <value>Already exists</value>
   </data>
-  <data name="Wrong password or email" xml:space="preserve">
-    <value>Złe hasło lub/i email</value>
+  <data name="Coud not add data" xml:space="preserve">
+    <value>Coud not add data</value>
+  </data>
+  <data name="Could not add data" xml:space="preserve">
+    <value>Could not add data</value>
+  </data>
+  <data name="Could not delete data" xml:space="preserve">
+    <value>Could not delete data</value>
+  </data>
+  <data name="Could not find a color" xml:space="preserve">
+    <value>Could not find a color</value>
+  </data>
+  <data name="Could not find a material" xml:space="preserve">
+    <value>Could not find a material</value>
+  </data>
+  <data name="Could not find a pattern" xml:space="preserve">
+    <value>Could not find a pattern</value>
+  </data>
+  <data name="Could not find a picture" xml:space="preserve">
+    <value>Could not find a picture</value>
+  </data>
+  <data name="Could not find furniture part" xml:space="preserve">
+    <value>Could not find furniture part</value>
+  </data>
+  <data name="doesn't have room" xml:space="preserve">
+    <value>doesn't have room</value>
+  </data>
+  <data name="doesn't own a category" xml:space="preserve">
+    <value>doesn't own a category</value>
+  </data>
+  <data name="Furniture part already exists" xml:space="preserve">
+    <value>Furniture part already exists</value>
+  </data>
+  <data name="Furniture with this ID" xml:space="preserve">
+    <value>Furniture with this ID</value>
+  </data>
+  <data name="Furtniture with this ID exists" xml:space="preserve">
+    <value>Furtniture with this ID exists</value>
+  </data>
+  <data name="Room or category doesn't exist" xml:space="preserve">
+    <value>Room or category doesn't exist</value>
+  </data>
+  <data name="Some bug" xml:space="preserve">
+    <value>Some bug</value>
   </data>
 </root>
