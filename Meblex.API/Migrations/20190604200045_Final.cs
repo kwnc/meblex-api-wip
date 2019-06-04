@@ -280,6 +280,7 @@ namespace Meblex.API.Migrations
                     Size = table.Column<string>(maxLength: 32, nullable: false),
                     Approved = table.Column<bool>(nullable: false),
                     ClientId = table.Column<int>(nullable: false),
+                    Price = table.Column<float>(nullable: false),
                     PieceOfFurnitureId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -305,10 +306,9 @@ namespace Meblex.API.Migrations
                 {
                     OrderId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TransactionId = table.Column<int>(nullable: false),
+                    TransactionId = table.Column<string>(nullable: true),
                     Delivery = table.Column<string>(maxLength: 32, nullable: false),
                     Reservation = table.Column<bool>(nullable: false),
-                    Street = table.Column<string>(maxLength: 32, nullable: false),
                     Address = table.Column<string>(maxLength: 32, nullable: false),
                     State = table.Column<string>(maxLength: 32, nullable: false),
                     City = table.Column<string>(maxLength: 32, nullable: false),
@@ -417,8 +417,7 @@ namespace Meblex.API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_OrderLines_PartId",
                 table: "OrderLines",
-                column: "PartId",
-                unique: true);
+                column: "PartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderLines_PieceOfFurnitureId",

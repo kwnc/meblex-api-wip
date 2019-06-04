@@ -210,8 +210,7 @@ namespace Meblex.API.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("PartId")
-                        .IsUnique();
+                    b.HasIndex("PartId");
 
                     b.HasIndex("PieceOfFurnitureId");
 
@@ -432,8 +431,8 @@ namespace Meblex.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Meblex.API.Models.Part", "Part")
-                        .WithOne("OrderLine")
-                        .HasForeignKey("Meblex.API.Models.OrderLine", "PartId");
+                        .WithMany("OrderLine")
+                        .HasForeignKey("PartId");
 
                     b.HasOne("Meblex.API.Models.PieceOfFurniture", "PieceOfFurniture")
                         .WithMany("OrderLines")
