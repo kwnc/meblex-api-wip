@@ -11,6 +11,7 @@ using Meblex.API.FormsDto.Response;
 using Meblex.API.Helper;
 using Meblex.API.Interfaces;
 using Meblex.API.Models;
+using Microsoft.Extensions.Localization;
 
 namespace Meblex.API.Services
 {
@@ -18,9 +19,11 @@ namespace Meblex.API.Services
     {
         private readonly MeblexDbContext _context;
         private readonly IFurnitureService _furnitureService;
+        private readonly IStringLocalizer<CustomSizeService> _localizer;
 
-        public CustomSizeService(MeblexDbContext context, IFurnitureService furnitureService)
+        public CustomSizeService(MeblexDbContext context, IFurnitureService furnitureService, IStringLocalizer<CustomSizeService> localizer)
         {
+            _localizer = localizer;
             _context = context;
             _furnitureService = furnitureService;
         }
@@ -28,15 +31,15 @@ namespace Meblex.API.Services
         {
             var toAdd = Mapper.Map(form).ToANew<CustomSizeForm>();
             toAdd.Client = _context.Users.Find(userId).Client ??
-                           throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Client not found");
+                           throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Could not find client"]);
             toAdd.PieceOfFurniture = _context.Furniture.Find(form.PieceOfFurnitureId) ??
-                                     throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Piece of furniture not found");
+                                     throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Could not find furniture part"]);
             toAdd.Approved = false;
             _context.CustomSizeForms.Add(toAdd);
 
             if (_context.SaveChanges() == 0)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Could not add data"]);
             }
 
             return toAdd.CustomSizeFormId;
@@ -47,7 +50,7 @@ namespace Meblex.API.Services
             var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero().Value;
 
             var customSizeForm = _context.CustomSizeForms.Find(id) ??
-                                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Custom Size form not found");
+                                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Could not find individual size"]);
             var response = Mapper.Map(customSizeForm).ToANew<CustomSizeFormResponse>();
             response.PieceOfFurniture = _furnitureService.GetPieceOfFurniture(customSizeForm.PieceOfFurnitureId);
 
@@ -60,11 +63,11 @@ namespace Meblex.API.Services
             var UserId = Guard.Argument(userId, nameof(userId)).NotNegative().NotZero().Value;
 
             var user = _context.Users.Find(UserId) ??
-                       throw new HttpStatusCodeException(HttpStatusCode.NotFound, "User not found");
+                       throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["User not found"]);
             var client = user.Client ??
-                         throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Client found");
+                         throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["User found"]);
             var forms = client.CustomSizeForms ?? 
-                        throw new HttpStatusCodeException(HttpStatusCode.NoContent, "There are not any Custom Size Forms");
+                        throw new HttpStatusCodeException(HttpStatusCode.NoContent, _localizer["Individual forms don't exist"]);
             var response = new List<CustomSizeFormResponse>();
 
             foreach (var form in forms)
@@ -84,7 +87,7 @@ namespace Meblex.API.Services
             var UserId = Guard.Argument(userId, nameof(userId)).NotNegative().NotZero().Value;
 
             var customSizeForm = _context.CustomSizeForms.Single(x => x.CustomSizeFormId == Id && x.Client.UserId == UserId) ??
-                                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Custom Size form not found");
+                                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Individual size not found"]);
             var response = Mapper.Map(customSizeForm).ToANew<CustomSizeFormResponse>();
             response.PieceOfFurniture = _furnitureService.GetPieceOfFurniture(customSizeForm.PieceOfFurnitureId);
 
@@ -98,8 +101,8 @@ namespace Meblex.API.Services
             var Price = Guard.Argument(price, nameof(price)).Value;
 
             var form = _context.CustomSizeForms.Find(Id) ??
-                       throw new HttpStatusCodeException(HttpStatusCode.NotFound, "Custom Size form not found");
-            if(form.Approved) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Already accepted");
+                       throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Individual size not found"]);
+            if(form.Approved) throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Accepted"]);
             form.Approved = true;
             form.Price = Price;
 
@@ -107,7 +110,7 @@ namespace Meblex.API.Services
 
             if (_context.SaveChanges() == 0)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, "Unable to add data");
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Could not add data"]);
             }
 
             return GetById(form.CustomSizeFormId);

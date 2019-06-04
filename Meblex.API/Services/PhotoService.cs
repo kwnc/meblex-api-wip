@@ -26,7 +26,6 @@ namespace Meblex.API.Services
                 new BasicAWSCredentials(Environment.GetEnvironmentVariable("SPACES_ACCESS_KEY"),
                     Environment.GetEnvironmentVariable("SPACES_SECRET_KEY"));
             _client = new AmazonS3Client(_credentials,_config);
-
         }
 
         public async Task<List<string>> SafePhotos(List<string> photos)

@@ -22,7 +22,6 @@ namespace Meblex.API.Services
             _context = context;
             _mapper = mapper;
             _authService = authService;
-
         }
         public async Task<Client> GetUserData(string login)
         {
