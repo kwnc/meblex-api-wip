@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dawn;
 using Meblex.API.FormsDto.Request;
 using Meblex.API.FormsDto.Response;
 using Meblex.API.Interfaces;
@@ -56,5 +57,20 @@ namespace Meblex.API.Controller
             var response = _shoppingCartService.GetClientById(id, userId);
             return StatusCode(200, response);
         }
+
+        [Authorize(Roles = "Client")]
+        [HttpPut("client/realize-reservation/{id}")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(500)]
+        [SwaggerResponse(404)]
+        public IActionResult RealizeReservation(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero().Value;
+
+            _shoppingCartService.RealizeReservation(Id);
+
+            return Ok();
+        }
+
     }
 }

@@ -160,6 +160,25 @@ namespace Meblex.API.Services
             return responses;
         }
 
+        public void RealizeReservation(int id)
+        {
+            var Id = Guard.Argument(id, nameof(id)).NotNegative().NotZero().Value;
+
+            var order = _context.Orders.Find(Id) ?? throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["Order with this id do not exist"]);
+            if (order.Reservation)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.Conflict, _localizer["Reservation already realized"]);
+            }
+
+            order.Reservation = true;
+            _context.Orders.Update(order);
+
+            if (_context.SaveChanges() == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, _localizer["Could not add data"]);
+            }
+        }
+
 
     }
 }
