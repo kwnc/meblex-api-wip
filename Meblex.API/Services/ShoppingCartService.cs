@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AgileObjects.AgileMapper;
 using Dawn;
 using Meblex.API.Context;
 using Meblex.API.FormsDto.Request;
@@ -117,7 +118,7 @@ namespace Meblex.API.Services
                     Price = x.Price,
                     Size = x.Size,
                     PieceOfFurniture = x.PieceOfFurniture == null ? null : new ShoppingCartFurnitureResponse() { Name = x.PieceOfFurniture.Name, PieceOfFurnitureId = x.PieceOfFurniture.PieceOfFurnitureId, Photos = x.PieceOfFurniture.Photos.Select(z => z.Path).ToList()},
-                    Part = x.Part == null ? null: new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId, PieceOfFurnitureId = x.Part.PieceOfFurnitureId}
+                    Part = x.Part == null ? null: new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId, PieceOfFurnitureId = x.Part.PieceOfFurnitureId, Category = Mapper.Map(x.Part.PieceOfFurniture.Category).ToANew<CategoryResponse>()}
                 }).ToList()
             };
 
@@ -149,7 +150,7 @@ namespace Meblex.API.Services
                         Price = x.Price,
                         Size = x.Size,
                         PieceOfFurniture = x.PieceOfFurniture == null ? null : new ShoppingCartFurnitureResponse() { Name = x.PieceOfFurniture.Name, PieceOfFurnitureId = x.PieceOfFurniture.PieceOfFurnitureId, Photos = x.PieceOfFurniture.Photos.Select(z => z.Path).ToList() },
-                        Part = x.Part == null ? null : new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId, PieceOfFurnitureId = x.Part.PieceOfFurnitureId }
+                        Part = x.Part == null ? null : new ShoppingCartPartResponse() { Name = x.Part.Name, PartId = x.Part.PartId, PieceOfFurnitureId = x.Part.PieceOfFurnitureId, Category = Mapper.Map(x.Part.PieceOfFurniture.Category).ToANew<CategoryResponse>() }
                     }).ToList()
                 };
 
