@@ -26,7 +26,7 @@ namespace Meblex.API.FormsDto.Request
         public UserUpdateFormValidation()
         {
             RuleFor(x => x.Name).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.Name));
-            RuleFor(x => x.NIP).Matches("^[0-9]*$").Length(10).When(x => !string.IsNullOrEmpty(x.NIP));
+            RuleFor(x => x.NIP).Matches("^[0-9]*$").Length(10).When(x => !string.IsNullOrEmpty(x.NIP) || !string.IsNullOrWhiteSpace(x.NIP));
             RuleFor(x => x.Address).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.Address));
             RuleFor(x => x.State).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.State));
             RuleFor(x => x.City).MaximumLength(32).When(x => !string.IsNullOrEmpty(x.City));
