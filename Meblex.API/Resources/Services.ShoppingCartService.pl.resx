@@ -129,6 +129,12 @@
   <data name="Not enough amount of available" xml:space="preserve">
     <value>Nie wystarczająca ilość dostępnych </value>
   </data>
+  <data name="Order with this id do not exist" xml:space="preserve">
+    <value>Nie znaleziono takiego ordera z id</value>
+  </data>
+  <data name="Reservation already realized" xml:space="preserve">
+    <value>Zrealizowano już to zamówienie</value>
+  </data>
   <data name="Some bug" xml:space="preserve">
     <value>Błąd :&gt;*</value>
   </data>

@@ -9,5 +9,6 @@ namespace Meblex.API.Interfaces
         List<OrderResponse> GetAllClientOrders(int userId);
         OrderResponse GetClientById(int id, int userId);
         int AddOrder(int userId, OrderAddForm order);
+        void RealizeReservation(int id);
     }
 }
