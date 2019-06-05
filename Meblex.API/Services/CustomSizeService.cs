@@ -66,8 +66,8 @@ namespace Meblex.API.Services
                        throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["User not found"]);
             var client = user.Client ??
                          throw new HttpStatusCodeException(HttpStatusCode.NotFound, _localizer["User found"]);
-            var forms = client.CustomSizeForms ?? 
-                        throw new HttpStatusCodeException(HttpStatusCode.NoContent, _localizer["Individual forms don't exist"]);
+            var forms = client.CustomSizeForms;
+            if(forms == null) return new List<CustomSizeFormResponse>();
             var response = new List<CustomSizeFormResponse>();
 
             foreach (var form in forms)

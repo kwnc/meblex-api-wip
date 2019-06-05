@@ -19,7 +19,7 @@ namespace Meblex.API.FormsDto.Response
 
         public int PostCode { get; set; }
 
-        public int NIP { get; set; }
+        public int? NIP { get; set; }
 
         public string AccessToken { get; set; }
 

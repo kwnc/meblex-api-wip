@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
+using Mapper = AgileObjects.AgileMapper.Mapper;
 
 namespace Meblex.API.Controller
 {
@@ -58,7 +59,13 @@ namespace Meblex.API.Controller
             var userData = await _userService.GetUserData(user.Email);
 
             
-            var response = _mapper.Map<AuthLoginResponse>(userData);
+            var response = new AuthLoginResponse();
+            response.Address = userData.Address;
+            response.City = userData.City;
+            response.Name = userData.Name;
+            response.NIP = userData.NIP == null ? (int?) null : int.Parse(userData.NIP);
+            response.PostCode = userData.PostCode;
+            response.State = userData.State;
             response.AccessToken = accessToken;
             response.RefreshToken = refreshToken;
             response.Email = user.Email;
