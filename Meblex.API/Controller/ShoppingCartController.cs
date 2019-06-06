@@ -37,13 +37,12 @@ namespace Meblex.API.Controller
         [Authorize(Roles = "Client")]
         [HttpGet("client/list")]
         [SwaggerResponse(500)]
-        [SwaggerResponse(204, "", typeof(List<>))]
         [SwaggerResponse(200, "", typeof(List<OrderResponse>))]
         public IActionResult GetAllClientOrders()
         {
             var userId = _jwtService.GetAccessTokenUserId(User);
             var response = _shoppingCartService.GetAllClientOrders(userId);
-            return response.Count == 0 ? StatusCode(204, new List<OrderResponse>()) : StatusCode(200, response);
+            return response.Count == 0 ?  StatusCode(200, response);
         }
 
         [Authorize(Roles = "Client")]
