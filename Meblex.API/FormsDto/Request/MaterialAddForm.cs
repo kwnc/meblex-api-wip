@@ -22,7 +22,7 @@ namespace Meblex.API.FormsDto.Request
         {
             RuleFor(x => x.Name).NotEmpty().NotNull().MaximumLength(128);
             RuleFor(x => x.Slug).NotEmpty().NotNull().MaximumLength(128);
-            RuleFor(x => x.Photo).NotEmpty().NotNull().IsImage();
+            RuleFor(x => x.Photo).NotEmpty().NotNull();
         }
     }
 }
