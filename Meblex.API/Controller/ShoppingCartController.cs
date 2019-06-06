@@ -42,7 +42,7 @@ namespace Meblex.API.Controller
         {
             var userId = _jwtService.GetAccessTokenUserId(User);
             var response = _shoppingCartService.GetAllClientOrders(userId);
-            return response.Count == 0 ?  StatusCode(200, response);
+            return   StatusCode(200, response);
         }
 
         [Authorize(Roles = "Client")]
