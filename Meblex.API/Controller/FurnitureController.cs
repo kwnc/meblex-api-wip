@@ -15,7 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Meblex.API.Controller
 {
-    [Authorize]
+//    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -357,7 +357,7 @@ namespace Meblex.API.Controller
             var response = _furnitureService.GetAllFurniture();
             return StatusCode(200, response);
         }
-        [AllowAnonymous]
+//        [AllowAnonymous]
         [HttpGet("pieceOfFurniture/{id}")]
         [SwaggerResponse(200, "", typeof(FurnitureResponse))]
         [SwaggerResponse(404)]
