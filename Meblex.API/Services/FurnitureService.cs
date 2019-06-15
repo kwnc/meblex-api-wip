@@ -133,9 +133,9 @@ namespace Meblex.API.Services
             var material = pieceOfFurniture.Material;
             var pattern = pieceOfFurniture.Pattern;
             var materialResponse = Mapper.Map(material).ToANew<MaterialResponse>();
-            materialResponse.Photo = material.Photo.Path;
+            materialResponse.Photo = pieceOfFurniture.Material.Photo.Path;
             var patternResponse = Mapper.Map(pattern).ToANew<PatternsResponse>();
-            patternResponse.Photo = pattern.Photo.Path;
+            patternResponse.Photo = pieceOfFurniture.Pattern.Photo.Path;
             return new FurnitureResponse()
             {
                 Id = pieceOfFurniture.PieceOfFurnitureId,
@@ -197,9 +197,9 @@ namespace Meblex.API.Services
                 var color = pieceOfFurniture.Color;
                 var material = pieceOfFurniture.Material;
                 var materialResponse = Mapper.Map(material).ToANew<MaterialResponse>();
-                materialResponse.Photo = material.Photo.Path;
+                materialResponse.Photo = pieceOfFurniture.Material.Photo.Path;
                 var patternResponse = Mapper.Map(pattern).ToANew<PatternsResponse>();
-                patternResponse.Photo = pattern.Photo.Path;
+                patternResponse.Photo = pieceOfFurniture.Pattern.Photo.Path;
                 var final = new FurnitureResponse()
                 {
                     Id = pieceOfFurniture.PieceOfFurnitureId,
